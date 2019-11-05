@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'
 import {
   Collapse,
   Navbar,
   NavbarToggler,
-  NavbarBrand,
   Nav,
-  NavItem,
-  NavLink,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -21,33 +19,67 @@ const MyNavBar = (props) => {
   return (
     <Container>
       <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">reactstrap</NavbarBrand>
+        <Link to="/">Kerjarek</Link>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="ml-auto" navbar>
-            <NavItem>
-              <NavLink href="/components/">Components</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-            </NavItem>
+
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
-                Options
+                Pekerjaan
               </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem>
-                  Option 1
+                  <Link to="/tambah">Buat Lowongan</Link>
                 </DropdownItem>
                 <DropdownItem>
-                  Option 2
+                  <Link to="/perbarui">Perbarui Lowongan</Link>
                 </DropdownItem>
-                <DropdownItem divider />
                 <DropdownItem>
-                  Reset
+                  <Link to="/hapus">Hapus Lowongan</Link>
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
+
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                Perusahaan
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem>
+                  <Link to="/lihatcom">Lihat Perusahaan</Link>
+                </DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem>
+                  <Link to="/tambahcom">Tambah Perusahaan (Admin)</Link>
+                </DropdownItem>
+                <DropdownItem>
+                  <Link to="/perbaruicom">Perbarui Perusahaan (Admin)</Link>
+                </DropdownItem>
+                <DropdownItem>
+                  <Link to="/hapuscom">Hapus Perusahaan (Admin)</Link>
+                </DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                ...
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem>
+                  <Link to="/masuk">Masuk</Link>
+                </DropdownItem>
+                <DropdownItem>
+                  <Link to="/daftar">Daftar</Link>
+                </DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem>
+                  <Link to="/keluar">Keluar</Link>
+                </DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+
           </Nav>
         </Collapse>
       </Navbar>

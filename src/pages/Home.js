@@ -8,7 +8,7 @@ export default class Home extends React.Component {
 	render() {
 		return (
 			<div>
-				<MyJumbotron />
+				<MyJumbotron history={this.props.history}/>
 				<SearchLayout />
 			</div>
 		);
