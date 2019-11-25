@@ -1,7 +1,22 @@
 import React, { Component } from 'react'
 import { Alert } from 'reactstrap';
 
-export default class Logout extends Component {
+import { connect } from 'react-redux';
+import {userLogout} from '../redux/actions/user'
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    userLogout: () => dispatch(userLogout())
+  }
+}
+
+class Logout extends Component {
 
 	constructor(props) {
 		super(props)
@@ -11,14 +26,12 @@ export default class Logout extends Component {
 	}
 
 	componentDidMount() {
-		const logInfo = localStorage.getItem('token');
-		if (logInfo) {
-			localStorage.removeItem('token');
-			localStorage.removeItem('username');
+		if (this.props.user.token !== '') {
 			this.setState({
 				isLogout: true,
 			})
 			setTimeout(() => this.props.history.push('/'), 3000)
+			this.props.userLogout()
 		}
 		
 	}
@@ -26,13 +39,18 @@ export default class Logout extends Component {
   render() {
     return (
       <div>
-        {this.state.isLogout&&(
-        	<Alert color="success">You have been loged out..</Alert>
+        {this.state.isLogout && !this.props.user.isErrorOut &&(
+        	<Alert color="success">Kamu berhasil keluar..</Alert>
+        )}
+        {this.state.isLogout && this.props.user.isErrorOut &&(
+        	<Alert color="danger">Error, tidak dapat keluar..</Alert>
         )}
         {!this.state.isLogout&&(
-        	<Alert color="danger">You have not been loged in yet..</Alert>
+        	<Alert color="danger">Saat ini kamu belum masuk..</Alert>
         )}
       </div>
     )
   }
 }
+
+export default connect(mapStatetoProps, mapDispatchToProps)(Logout);

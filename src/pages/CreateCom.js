@@ -4,7 +4,23 @@ import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
 
-export default class CreateCom extends Component {
+import { connect } from 'react-redux';
+import {addCompany} from '../redux/actions/company'
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+    company: state.company,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addCompany: (createData, resToken) => dispatch(addCompany(createData, resToken))
+  }
+}
+
+class CreateCom extends Component {
 
 	constructor(props) {
     super(props)
@@ -18,6 +34,7 @@ export default class CreateCom extends Component {
       alreadyLogin: '',
       alreadyLoginMsg: '',
       isGoLogin: '',
+      isSubmit: false,
     }
   }
 
@@ -34,108 +51,101 @@ export default class CreateCom extends Component {
 	handleSubmit = (event) => {
     event.preventDefault();
 
-    this.loadToken('username')
-    .then( res0 => {
-      if (res0 !== 'lathifalrasyid') {
-        this.setState({
-          isGoLogin: 'yes'
-        })
-      } else {
+    if (this.props.user.username !== 'lathifalrasyid') {
+      this.setState({
+        isGoLogin: 'yes'
+      })
+    } else {
+      this.setState({
+        isSubmit: true,
+      })
 
-        const name = this.state.name;
-        const desc = this.state.desc;
-        const logo = this.state.logo;
-        const loc = this.state.loc;
-        const createData = {
-        	'name': name,
-        	'description': desc,
-        	'logo': logo,
-        	'location': loc,
-        }
-        // const loginData = event.target;
-        console.log(createData)
-        this.setState ({
-        	name: '',
-        	desc: '',
-        	logo: '',
-        	loc: '',
-        })
-        this.loadToken('token')
-        .then(resToken=>{
-        this.getData(createData, resToken)
-        .then(res=>{
-        	console.log('result')
-        	console.log(res)
-        	this.setState({
-        		isCreated: 'yes',
-          	createMessage: res.message,
-        	})
-        	// setTimeout(() => this.props.history.push('/'), 3000)
-        	// res.result.authorization
-        	// res.result.message
-        	// localStorage.setItem('token', res.result.authorization);
-   	    	// localStorage.getItem('myData');
-   	    	// console.log('token was saved to local')
-        })
-        .catch(err=>{
-        	console.log('error')
-        	console.log(err)
-        	this.setState({
-        		isCreated: 'no',
-          	createMessage: err.response.data.status + ', '
-        			+ err.response.data.message,
-        	})
-        })
-        })
-        .catch(errToken=>{
-        	console.log('error')
-        	console.log(errToken)
-        })
+      const name = this.state.name;
+      const desc = this.state.desc;
+      const logo = this.state.logo;
+      const loc = this.state.loc;
+      const createData = {
+      	'name': name,
+      	'description': desc,
+      	'logo': logo,
+      	'location': loc,
       }
-    })
-    .catch( err0 => {
-      console.log(err0)
-    })
+      // const loginData = event.target;
+      console.log(createData)
+      this.setState ({
+      	name: '',
+      	desc: '',
+      	logo: '',
+      	loc: '',
+      })
+      this.props.addCompany(createData, this.props.user.token)
+      // .then(res=>{
+      // 	console.log('result')
+      //  	console.log(res)
+      //  	this.setState({
+      // 		isCreated: 'yes',
+      //    	createMessage: res.message,
+      //  	})
+       	// setTimeout(() => this.props.history.push('/'), 3000)
+       	// res.result.authorization
+       	// res.result.message
+       	// localStorage.setItem('token', res.result.authorization);
+ 	    	// localStorage.getItem('myData');
+ 	    	// console.log('token was saved to local')
+      // })
+      // .catch(err=>{
+      // 	console.log('error')
+      //  	console.log(err)
+      //  	this.setState({
+      //  		isCreated: 'no',
+      //    	createMessage: err.response.data.status + ', '
+      // 			+ err.response.data.message,
+      //  	})
+      // })
+    }
   }
 
   componentWillMount() {
-    this.loadToken('username')
-    .then( res => {
-      if (res !== 'lathifalrasyid') {
-        this.setState({
-          alreadyLogin: 'no',
-          alreadyLoginMsg: 'Only admin can create a company.'
-        })  
-      } else {
-        this.setState({
-          alreadyLogin: 'yes',
-        })
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    })
+    if (this.props.user.username !== 'lathifalrasyid') {
+      this.setState({
+        alreadyLogin: 'no',
+        alreadyLoginMsg: 'Hanya admin yang dapat menambah perusahaan.'
+      })  
+    } else {
+      this.setState({
+        alreadyLogin: 'yes',
+      })
+    }
   }
 
-  loadToken = async (keyToken) => {
-  	const resultToken = await localStorage.getItem(keyToken);
-  	return resultToken
-  }
-
-  getData = async (createData, resToken) => {
-    const result = await axios({
-  		method: 'post',
-  		url: 'http://localhost:8080/company',
-  		data: qs.stringify(createData),
-  		headers: {
-    		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-    		'authorization': resToken,
-  		}
-		})
-    return result.data
-   }
+  // getData = async (createData, resToken) => {
+  //   const result = await axios({
+  // 		method: 'post',
+  // 		url: 'http://localhost:8080/company',
+  // 		data: qs.stringify(createData),
+  // 		headers: {
+  //   		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+  //   		'authorization': resToken,
+  // 		}
+		// })
+  //   return result.data
+  //  }
 
   render() {
+    let isCreated = ''
+    let createMessage = ''
+    if ( this.state.isSubmit && !this.props.company.isLoading && !this.props.company.isError ) {
+      // this.setState({
+      isCreated = 'yes'
+      createMessage = this.props.company.createMessage
+      // })
+    }
+    if ( this.state.isSubmit && !this.props.company.isLoading && this.props.company.isError ) {
+      // this.setState({
+      isCreated = 'no'
+      createMessage = this.props.company.createMessage
+      // })
+    }
     return (
     	<Container>
       {this.state.alreadyLogin==='no'&&
@@ -147,26 +157,26 @@ export default class CreateCom extends Component {
       }
       <Form onSubmit={this.handleSubmit}>
 	      <FormGroup>
-  	      <Label for="nameLabel">Company name</Label>
+  	      <Label for="nameLabel">Nama Perusahaan</Label>
     	    <Input
     	    	type="text"
     	    	name="name"
     	    	id="nameId"
     	    	value={this.state.name}
             onChange={this.handleChange}
-    	    	placeholder="Company's name.."
+    	    	placeholder="nama perusahaan.."
     	    	required
     	    />
       	</FormGroup>
         <FormGroup>
-          <Label for="locLabel">Location</Label>
+          <Label for="locLabel">Lokasi</Label>
           <Input
             type="text"
             name="loc"
             id="locId"
             value={this.state.loc}
             onChange={this.handleChange}
-            placeholder="Company's location.."
+            placeholder="lokasi perusahaan.."
             required
           />
         </FormGroup>
@@ -178,40 +188,42 @@ export default class CreateCom extends Component {
             id="logoId"
             value={this.state.logo}
             onChange={this.handleChange}
-            placeholder="Insert the logo.."
+            placeholder="logo perusahaan.."
             required
           />
         </FormGroup>
       	<FormGroup>
-  	      <Label for="descLabel">Description</Label>
+  	      <Label for="descLabel">Deskripsi</Label>
     	    <Input
-    	    	type="text"
+    	    	type="textarea"
     	    	name="desc"
     	    	id="descId"
     	    	value={this.state.desc}
             onChange={this.handleChange}
-    	    	placeholder="Description of the company.."
+    	    	placeholder="deskripsi perusahaan.."
     	    	required
     	    />
       	</FormGroup>
       	<Button>Create</Button>
       </Form>
-      {this.state.isCreated=='yes'&&(
+      {isCreated=='yes'&&(
       <Alert color="success">
-        {this.state.createMessage}
+        {createMessage}
       </Alert>
       )}
-      {this.state.isCreated=='no'&&(
+      {isCreated=='no'&&(
       <Alert color="danger">
-        {this.state.createMessage}
+        {createMessage}
       </Alert>
       )}
       {this.state.isGoLogin=='yes'&&(
       <Alert color="danger">
-        Cannot create a company. You are not an admin!
+        Tidak dapat menambah perusahaan. Kamu bukan admin!
       </Alert>
       )}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps, mapDispatchToProps)(CreateCom);

@@ -4,22 +4,48 @@ import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
 
-export default class Create extends Component {
+import { connect } from 'react-redux';
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+  }
+}
+
+class Create extends Component {
 
 	constructor(props) {
     super(props)
-    this.state = {
-    	name: '',
-    	desc: '',
-    	cate: '',
-    	salary: '',
-    	loc: '',
-    	comId: '',
-    	isCreated: '',
-    	createMessage: '',
-      alreadyLogin: '',
-      alreadyLoginMsg: '',
-      isGoLogin: '',
+    const data = props.location.state
+    if (data===undefined){
+      this.state = {
+      	name: '',
+      	desc: '',
+      	cate: '',
+      	salary: '',
+      	loc: '',
+      	comId: '',
+      	isCreated: '',
+      	createMessage: '',
+        alreadyLogin: '',
+        alreadyLoginMsg: '',
+        isGoLogin: '',
+      }
+    } else {
+      this.state = {
+        name: '',
+        desc: '',
+        cate: '',
+        salary: '',
+        loc: '',
+        comId: data.id,
+        isCreated: '',
+        createMessage: '',
+        alreadyLogin: '',
+        alreadyLoginMsg: '',
+        isGoLogin: '',
+        isFromRead: true,
+      }
     }
   }
 
@@ -36,98 +62,75 @@ export default class Create extends Component {
 	handleSubmit = (event) => {
     event.preventDefault();
 
-    this.loadToken('token')
-    .then( res0 => {
-      if (res0 === null) {
-        this.setState({
-          isGoLogin: 'yes'
-        })
-      } else {
+    if (this.props.user.token === '') {
+      this.setState({
+        isGoLogin: 'yes'
+      })
+    } else {
 
-        const name = this.state.name;
-        const desc = this.state.desc;
-        const cate = this.state.cate;
-        const salary = this.state.salary;
-        const loc = this.state.loc;
-        const comId = this.state.comId;
-        const createData = {
-        	'name': name,
-        	'description': desc,
-        	'category': cate,
-        	'salary': Number(salary),
-        	'location': loc,
-        	'company_id': comId,
-        }
-        // const loginData = event.target;
-        console.log(createData)
-        this.setState ({
-        	name: '',
-        	desc: '',
-        	cate: '',
-        	salary: '',
-        	loc: '',
-        	comId: '',
-        })
-        this.loadToken('token')
-        .then(resToken=>{
-        this.getData(createData, resToken)
-        .then(res=>{
-        	console.log('result')
-        	console.log(res)
-        	this.setState({
-        		isCreated: 'yes',
-          	createMessage: res.message,
-        	})
-        	// setTimeout(() => this.props.history.push('/'), 3000)
-        	// res.result.authorization
-        	// res.result.message
-        	// localStorage.setItem('token', res.result.authorization);
-   	    	// localStorage.getItem('myData');
-   	    	// console.log('token was saved to local')
-        })
-        .catch(err=>{
-        	console.log('error')
-        	console.log(err)
-        	this.setState({
-        		isCreated: 'no',
-          	createMessage: err.response.data.status + ', '
-        			+ err.response.data.message,
-        	})
-        })
-        })
-        .catch(errToken=>{
-        	console.log('error')
-        	console.log(errToken)
-        })
+      const name = this.state.name;
+      const desc = this.state.desc;
+      const cate = this.state.cate;
+      const salary = this.state.salary;
+      const loc = this.state.loc;
+      const comId = this.state.comId;
+      const createData = {
+      	'name': name,
+      	'description': desc,
+      	'category': cate,
+      	'salary': Number(salary),
+      	'location': loc,
+      	'company_id': comId,
       }
-    })
-    .catch( err0 => {
-      console.log(err0)
-    })
+      // const loginData = event.target;
+      console.log(createData)
+      this.setState ({
+      	name: '',
+      	desc: '',
+      	cate: '',
+      	salary: '',
+      	loc: '',
+      	comId: '',
+      })
+      this.getData(createData, this.props.user.token)
+      .then(res=>{
+    	  console.log('result')
+    	  console.log(res)
+    	  this.setState({
+     		  isCreated: 'yes',
+       	  createMessage: res.message,
+    	  })
+    	  // setTimeout(() => this.props.history.push('/'), 3000)
+     	  // res.result.authorization
+     	  // res.result.message
+     	  // localStorage.setItem('token', res.result.authorization);
+    	  // localStorage.getItem('myData');
+    	  // console.log('token was saved to local')
+      })
+      .catch(err=>{
+    	  console.log('error')
+     	  console.log(err)
+     	  this.setState({
+     		  isCreated: 'no',
+       	  createMessage: err.response.data.status + ', '
+     			+ err.response.data.message,
+     	  })
+      })
+    }
   }
 
   componentWillMount() {
-    this.loadToken('token')
-    .then( res => {
-      if (res === null) {
-        this.setState({
-          alreadyLogin: 'no',
-          alreadyLoginMsg: 'You have to login first before you can post a job, '
-        })  
-      } else {
-        this.setState({
-          alreadyLogin: 'yes',
-        })
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    })
-  }
 
-  loadToken = async (keyToken) => {
-  	const resultToken = await localStorage.getItem(keyToken);
-  	return resultToken
+    if (this.props.user.token === '') {
+      this.setState({
+        alreadyLogin: 'no',
+        alreadyLoginMsg: 'Kamu harus masuk terlebih dahulu sebelum dapat membuat lowongan pekerjaan, '
+      })  
+    } else {
+      this.setState({
+        alreadyLogin: 'yes',
+      })
+    }
   }
 
   getData = async (createData, resToken) => {
@@ -142,13 +145,18 @@ export default class Create extends Component {
   		}
 		})
     return result.data
-   }
+  }
+
+  goBack = () => {
+    this.props.history.push('/lihatcom')
+  }
 
   render() {
     const categoryArray = [
       'Pendidikan', 'Kuliner', 'Programmer', 'IT', 'Desain', 'Olah Raga', 'Kesenian',
       'Hukum', 'Administrasi', 'Lainnya', 'Manajemen', 'Matematika', 'Data', 'Ekonomi',
-      'Psikologi', 'Sosial', 'Otomotif', 'Kesehatan', 'Kedokteran', 'Pertanian', 'Peternakan'
+      'Psikologi', 'Sosial', 'Otomotif', 'Kesehatan', 'Kedokteran', 'Pertanian', 'Peternakan',
+      'Transportasi'
     ];
     categoryArray.sort();
     return (
@@ -156,7 +164,7 @@ export default class Create extends Component {
       {this.state.alreadyLogin==='no'&&
         (
         <Alert color="danger">
-          {this.state.alreadyLoginMsg} <Link to='/masuk'>log in here</Link>.
+          {this.state.alreadyLoginMsg} <Link to='/masuk'>masuk di sini</Link>.
         </Alert>
         )
       }
@@ -164,28 +172,28 @@ export default class Create extends Component {
       <Row>
         <Col md={6}>
 	      <FormGroup>
-  	      <Label for="nameLabel">Job name</Label>
+  	      <Label for="nameLabel">Nama Pekerjaan</Label>
     	    <Input
     	    	type="text"
     	    	name="name"
     	    	id="nameId"
     	    	value={this.state.name}
             onChange={this.handleChange}
-    	    	placeholder="enter job name.."
+    	    	placeholder="nama pekerjaan.."
     	    	required
     	    />
       	</FormGroup>
         </Col>
         <Col md={6}>
         <FormGroup>
-          <Label for="locLabel">Location</Label>
+          <Label for="locLabel">Lokasi</Label>
           <Input
             type="text"
             name="loc"
             id="locId"
             value={this.state.loc}
             onChange={this.handleChange}
-            placeholder="enter job's location.."
+            placeholder="lokasi kerja.."
             required
           />
         </FormGroup>
@@ -194,7 +202,7 @@ export default class Create extends Component {
       <Row>
         <Col md={6}>
         <FormGroup>
-          <Label for="cateLabel">Category</Label>
+          <Label for="cateLabel">Kategori</Label>
           <Input
             type="select"
             name="cate"
@@ -211,14 +219,14 @@ export default class Create extends Component {
         </Col>
         <Col md={6}>
         <FormGroup>
-          <Label for="salaryLabel">Salary</Label>
+          <Label for="salaryLabel">Gaji</Label>
           <Input
             type="number"
             name="salary"
             id="salaryId"
             value={this.state.salary}
             onChange={this.handleChange}
-            placeholder="enter salary to be offered.."
+            placeholder="gaji yang ditawarkan.."
             required
           />
         </FormGroup>
@@ -227,14 +235,14 @@ export default class Create extends Component {
       <Row>
         <Col>
       	<FormGroup>
-  	      <Label for="descLabel">Description</Label>
+  	      <Label for="descLabel">Deskripsi</Label>
     	    <Input
     	    	type="textarea"
     	    	name="desc"
     	    	id="descId"
     	    	value={this.state.desc}
             onChange={this.handleChange}
-    	    	placeholder="enter description of the job.."
+    	    	placeholder="deskripsi pekerjaan.."
     	    	required
     	    />
       	</FormGroup>
@@ -243,14 +251,14 @@ export default class Create extends Component {
       <Row>
         <Col>
       	<FormGroup>
-  	      <Label for="comIdLabel">Your Company ID</Label>
+  	      <Label for="comIdLabel">ID Perusahaan</Label>
     	    <Input
     	    	type="text"
     	    	name="comId"
     	    	id="comIdId"
     	    	value={this.state.comId}
             onChange={this.handleChange}
-    	    	placeholder="enter company ID.."
+    	    	placeholder="ID perusahaan.."
     	    	required
     	    />
       	</FormGroup>
@@ -258,7 +266,13 @@ export default class Create extends Component {
       </Row>
       <Row>
         <Col>
-      	<Button>Post</Button>
+        {this.state.isFromRead &&(
+        <React.Fragment>
+        <Button type="button" onClick={this.goBack}>Kembali</Button>
+        <span>&nbsp;</span>
+        </React.Fragment>
+        )}
+        <Button type="submit">Tambah</Button>
         </Col>
       </Row>
       </Form>
@@ -274,10 +288,12 @@ export default class Create extends Component {
       )}
       {this.state.isGoLogin=='yes'&&(
       <Alert color="danger">
-        Cannot post a job. You must log in first!
+        Tidak dapat membuat lowongan pekerjaan. Kamu harus masuk terlebih dahulu!
       </Alert>
       )}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps)(Create);

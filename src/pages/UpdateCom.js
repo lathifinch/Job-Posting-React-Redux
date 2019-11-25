@@ -4,21 +4,56 @@ import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
 
-export default class Update extends Component {
+import { connect } from 'react-redux';
+import {editCompany} from '../redux/actions/company'
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+    company: state.company,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    editCompany: (updateData, comId, resToken) => dispatch(editCompany(updateData, comId, resToken))
+  }
+}
+
+class UpdateCom extends Component {
 
 	constructor(props) {
     super(props)
-    this.state = {
-    	comId: '',
-    	name: '',
-    	description: '',
-    	logo: '',
-    	location: '',
-    	updateMessage: '',
-    	isUpdated: '',
-      alreadyLogin: '',
-      alreadyLoginMsg: '',
-      isGoLogin: '',
+    const data = props.location.state
+    if (data===undefined){
+      this.state = {
+      	comId: '',
+      	name: '',
+      	description: '',
+      	logo: '',
+      	location: '',
+      	updateMessage: '',
+      	isUpdated: '',
+        alreadyLogin: '',
+        alreadyLoginMsg: '',
+        isGoLogin: '',
+        isSubmit: false,
+      }
+    } else {
+      this.state = {
+        comId: data.id,
+        name: data.name,
+        description: data.description,
+        logo: data.logo,
+        location: data.location,
+        updateMessage: '',
+        isUpdated: '',
+        alreadyLogin: '',
+        alreadyLoginMsg: '',
+        isGoLogin: '',
+        isFromRead: true,
+        isSubmit: false,
+      }
     }
   }
 
@@ -35,124 +70,124 @@ export default class Update extends Component {
 	handleSubmit = (event) => {
     event.preventDefault();
 
-    this.loadToken('username')
-    .then( res0 => {
-      if (res0 !== 'lathifalrasyid') {
-        this.setState({
-          isGoLogin: 'yes'
-        })
-      } else {
+    if (this.props.user.username !== 'lathifalrasyid') {
+      this.setState({
+        isGoLogin: 'yes'
+      })
+    } else {
 
-        const comId = this.state.comId;
+      this.setState({
+        isSubmit: true,
+      })
 
-        const updateData = {};
-        for (var o in this.state) {
-          if (Object.hasOwnProperty.call(this.state, o)) {
-          	if (!['isUpdated', 'updateMessage', 'alreadyLogin',
-              'alreadyLoginMsg', 'isGoLogin', 'comId'].includes(o)
-              && this.state[o] !== "") {
-          		  updateData[o] = this.state[o];
-            }
+      const comId = this.state.comId;
+
+      const updateData = {};
+      for (var o in this.state) {
+        if (Object.hasOwnProperty.call(this.state, o)) {
+        	if (!['isUpdated', 'updateMessage', 'alreadyLogin', 'alreadyLoginMsg',
+            'isGoLogin', 'comId', 'isFromRead', 'isSubmit'].includes(o)
+            && this.state[o] !== "") {
+        		  updateData[o] = this.state[o];
           }
         }
-        // delete updateData['jobId']
-        console.log(updateData)
-
-        this.setState({
-        	comId: '',
-        	name: '',
-        	description: '',
-        	logo: '',
-        	location: '',
-        	updateMessage: '',
-        	isUpdated: '',
-        })
-
-		    if (Object.keys(updateData).length !== 0) {
-
-        this.loadToken('token')
-        .then(resToken=>{
-        this.getData(updateData, comId, resToken)
-        .then(res=>{
-        	console.log('result')
-        	console.log(res)
-        	this.setState({
-        		isUpdated: 'yes',
-          	updateMessage: res.message,
-        	})
-        	// setTimeout(() => this.props.history.push('/'), 3000)
-        	// res.result.authorization
-        	// res.result.message
-        	// localStorage.setItem('token', res.result.authorization);
-   	    	// localStorage.getItem('myData');
-   	    	// console.log('token was saved to local')
-        })
-        .catch(err=>{
-        	console.log('error')
-        	console.log(err.response.data)
-        	this.setState({
-        		isUpdated: 'no',
-          	updateMessage: err.response.data.status + ', '
-        			+ err.response.data.message,
-        	})
-        })
-        })
-        .catch(errToken=>{
-        	console.log('error')
-        	console.log(errToken)
-        })
-
- 		    } else {
- 		    	this.setState({
-        		isUpdated: 'yes',
-          	updateMessage: 'Nothing updated!',
-        	})
- 		    }
       }
-    })
-    .catch( err0 => {
-      console.log(err0)
-    }) 
+      // delete updateData['jobId']
+      console.log(updateData)
+
+      this.setState({
+      	comId: '',
+       	name: '',
+      	description: '',
+       	logo: '',
+       	location: '',
+       	updateMessage: '',
+       	isUpdated: '',
+      })
+
+	    if (Object.keys(updateData).length !== 0) {
+
+        this.props.editCompany(updateData, comId, this.props.user.token)
+
+        // this.getData(updateData, comId, this.props.user.token)
+        // .then(res=>{
+        // 	console.log('result')
+        //  	console.log(res)
+        //  	this.setState({
+        //  		isUpdated: 'yes',
+        //    	updateMessage: res.message,
+        //  	})
+        //  	// setTimeout(() => this.props.history.push('/'), 3000)
+        //  	// res.result.authorization
+        //  	// res.result.message
+        //  	// localStorage.setItem('token', res.result.authorization);
+   	    // 	// localStorage.getItem('myData');
+   	    // 	// console.log('token was saved to local')
+        // })
+        // .catch(err=>{
+        //  	console.log('error')
+        //  	console.log(err.response.data)
+        //  	this.setState({
+        //  		isUpdated: 'no',
+        //    	updateMessage: err.response.data.status + ', '
+        //  			+ err.response.data.message,
+        //  	})
+        // })
+
+	    } else {
+	    	this.setState({
+       		isUpdated: 'yes',
+         	updateMessage: 'Nothing updated!',
+       	})
+	    }
+    }
   }
 
   componentWillMount() {
-    this.loadToken('username')
-    .then( res => {
-      if (res !== 'lathifalrasyid') {
-        this.setState({
-          alreadyLogin: 'no',
-          alreadyLoginMsg: 'Only admin can create a company.'
-        })  
-      } else {
-        this.setState({
-          alreadyLogin: 'yes',
-        })
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    })
+    if (this.props.user.username !== 'lathifalrasyid') {
+      this.setState({
+        alreadyLogin: 'no',
+        alreadyLoginMsg: 'Hanya admin yang dapat memperbarui perusahaan.'
+      })  
+    } else {
+      this.setState({
+        alreadyLogin: 'yes',
+      })
+    }
   }
 
-  loadToken = async (keyToken) => {
-  	const resultToken = await localStorage.getItem(keyToken);
-  	return resultToken
-  }
+	// getData = async (updateData, comId, resToken) => {
+ //    const result = await axios({
+ //  		method: 'patch',
+ //  		url: 'http://localhost:8080/company/' + comId,
+ //  		data: qs.stringify(updateData),
+ //  		headers: {
+ //    		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+ //    		'authorization': resToken,
+ //  		}
+	// 	})
+ //    return result.data
+ //   }
 
-	getData = async (updateData, comId, resToken) => {
-    const result = await axios({
-  		method: 'patch',
-  		url: 'http://localhost:8080/company/' + comId,
-  		data: qs.stringify(updateData),
-  		headers: {
-    		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-    		'authorization': resToken,
-  		}
-		})
-    return result.data
-   }
+  goBack = () => {
+    this.props.history.push('/lihatcom')
+  }
 
   render() {
+    let isUpdated = ''
+    let updateMessage = ''
+    if ( this.state.isSubmit && !this.props.company.isLoading && !this.props.company.isError ) {
+      // this.setState({
+      isUpdated = 'yes'
+      updateMessage = this.props.company.updateMessage
+      // })
+    }
+    if ( this.state.isSubmit && !this.props.company.isLoading && this.props.company.isError ) {
+      // this.setState({
+      isUpdated = 'no'
+      updateMessage = this.props.company.updateMessage
+      // })
+    }
     return (
       <Container>
       {this.state.alreadyLogin==='no'&&
@@ -164,82 +199,90 @@ export default class Update extends Component {
       }
       <Form onSubmit={this.handleSubmit}>
       	<FormGroup>
-  	      <Label for="comIdLabel">Company's ID</Label>
+  	      <Label for="comIdLabel">ID Perusahaan</Label>
     	    <Input
     	    	type="text"
     	    	name="comId"
     	    	id="comIdId"
     	    	value={this.state.comId}
             onChange={this.handleChange}
-    	    	placeholder="ID of the company you want to update.."
+    	    	placeholder="ID perusahaan yang akan diperbarui.."
     	    	required
     	    />
       	</FormGroup>
 	      <FormGroup>
-  	      <Label for="nameLabel">Company's name</Label>
+  	      <Label for="nameLabel">Nama Perusahaan</Label>
     	    <Input
     	    	type="text"
     	    	name="name"
     	    	id="nameId"
     	    	value={this.state.name}
             onChange={this.handleChange}
-    	    	placeholder="New company's name.."
+    	    	placeholder="nama perusahaan yang baru.."
     	    />
       	</FormGroup>
         <FormGroup>
-          <Label for="locationLabel">Company's location</Label>
+          <Label for="locationLabel">Lokasi Perusahaan</Label>
           <Input
             type="text"
             name="location"
             id="locationId"
             value={this.state.location}
             onChange={this.handleChange}
-            placeholder="New company's location.."
+            placeholder="lokasi perusahaan yang baru.."
             
           />
         </FormGroup>
         <FormGroup>
-          <Label for="logoLabel">Company's logo</Label>
+          <Label for="logoLabel">Logo Perusahaan</Label>
           <Input
             type="text"
             name="logo"
             id="logoId"
             value={this.state.logo}
             onChange={this.handleChange}
-            placeholder="New company's logo.."
+            placeholder="logo perusahaan yang baru.."
             
           />
         </FormGroup>
       	<FormGroup>
-  	      <Label for="descriptionLabel">Company's description</Label>
+  	      <Label for="descriptionLabel">Deskripsi</Label>
     	    <Input
-    	    	type="text"
+    	    	type="textarea"
     	    	name="description"
     	    	id="descriptionId"
     	    	value={this.state.description}
             onChange={this.handleChange}
-    	    	placeholder="New company's description.."
+    	    	placeholder="deskripsi perusahaan yang baru.."
     	    	
     	    />
       	</FormGroup>
-      	<Button>Update</Button>
+      	{this.state.isFromRead &&(
+        <React.Fragment>
+        <Button type="button" onClick={this.goBack}>Kembali</Button>
+        <span>&nbsp;</span>
+        </React.Fragment>
+        )}
+        <Button type="submit">Perbarui</Button>
       </Form>
-      {this.state.isUpdated=='yes'&&(
+      {isUpdated=='yes'&&(
       <Alert color="success">
-        {this.state.updateMessage}
+        {updateMessage}
       </Alert>
       )}
-      {this.state.isUpdated=='no'&&(
+      {isUpdated=='no'&&(
       <Alert color="danger">
-        {this.state.updateMessage}
+        {updateMessage}
       </Alert>
       )}
       {this.state.isGoLogin=='yes'&&(
       <Alert color="danger">
-        Cannot update a company. You are not an admin!
+        Tidak dapat memperbarui perusahaan. Kamu bukan admin!
       </Alert>
       )}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps, mapDispatchToProps)(UpdateCom);

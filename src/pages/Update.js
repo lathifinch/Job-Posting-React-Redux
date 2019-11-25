@@ -4,7 +4,15 @@ import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
 
-export default class Update extends Component {
+import { connect } from 'react-redux';
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+  }
+}
+
+class Update extends Component {
 
 	constructor(props) {
     super(props)
@@ -36,6 +44,7 @@ export default class Update extends Component {
         alreadyLogin: '',
         alreadyLoginMsg: '',
         isGoLogin: '',
+        isFromRead: true,
       }
     }
   }
@@ -53,50 +62,45 @@ export default class Update extends Component {
 	handleSubmit = (event) => {
     event.preventDefault();
 
-    this.loadToken('token')
-    .then( res0 => {
-      if (res0 === null) {
-        this.setState({
-          isGoLogin: 'yes'
-        })
-      } else {
+    if (this.props.user.token === '') {
+      this.setState({
+        isGoLogin: 'yes'
+      })
+    } else {
 
-        const jobId = this.state.jobId;
-
-        const updateData = {};
-        for (var o in this.state) {
-          if (Object.hasOwnProperty.call(this.state, o)) {
-          	if (!['isUpdated', 'updateMessage', 'alreadyLogin',
-              'alreadyLoginMsg', 'isGoLogin', 'jobId'].includes(o)
-              && this.state[o] !== "") {
-          		  if (o !== 'salary') {
-          			  updateData[o] = this.state[o];
-          		  } else {
-          			  updateData[o] = Number(this.state[o]);
-          		  }
-            	
-            }
+      const jobId = this.state.jobId;
+      const updateData = {};
+      for (var o in this.state) {
+        if (Object.hasOwnProperty.call(this.state, o)) {
+        	if (!['isUpdated', 'updateMessage', 'alreadyLogin',
+            'alreadyLoginMsg', 'isGoLogin', 'jobId', 'isFromRead'].includes(o)
+            && this.state[o] !== "") {
+        		  if (o !== 'salary') {
+        			  updateData[o] = this.state[o];
+        		  } else {
+        			  updateData[o] = Number(this.state[o]);
+        		  }
+          	
           }
         }
-        // delete updateData['jobId']
-        console.log(updateData)
+      }
+      // delete updateData['jobId']
+      console.log(updateData)
 
-        this.setState({
-        	jobId: '',
-        	name: '',
-        	description: '',
-        	category: '',
-        	salary: 0,
-        	location: '',
-        	updateMessage: '',
-        	isUpdated: '',
-        })
+      this.setState({
+      	jobId: '',
+      	name: '',
+      	description: '',
+      	category: '',
+      	salary: 0,
+      	location: '',
+      	updateMessage: '',
+      	isUpdated: '',
+      })
 
-		    if (Object.keys(updateData).length !== 0) {
+	    if (Object.keys(updateData).length !== 0) {
 
-        this.loadToken('token')
-        .then(resToken=>{
-        this.getData(updateData, jobId, resToken)
+        this.getData(updateData, jobId, this.props.user.token)
         .then(res=>{
         	console.log('result')
         	console.log(res)
@@ -120,47 +124,27 @@ export default class Update extends Component {
         			+ err.response.data.message,
         	})
         })
-        })
-        .catch(errToken=>{
-        	console.log('error')
-        	console.log(errToken)
-        })
 
- 		    } else {
- 		    	this.setState({
-        		isUpdated: 'yes',
-          	updateMessage: 'Nothing updated!',
-        	})
- 		    }
-      }
-    })
-    .catch( err0 => {
-      console.log(err0)
-    }) 
+	    } else {
+	    	this.setState({
+      		isUpdated: 'yes',
+        	updateMessage: 'Nothing updated!',
+      	})
+	    }
+    }
   }
 
   componentWillMount() {
-    this.loadToken('token')
-    .then( res => {
-      if (res === null) {
-        this.setState({
-          alreadyLogin: 'no',
-          alreadyLoginMsg: 'You have to login first before you can update a job, '
-        })  
-      } else {
-        this.setState({
-          alreadyLogin: 'yes',
-        })
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    })
-  }
-
-  loadToken = async (keyToken) => {
-  	const resultToken = await localStorage.getItem(keyToken);
-  	return resultToken
+    if (this.props.user.token === '') {
+      this.setState({
+        alreadyLogin: 'no',
+        alreadyLoginMsg: 'Kamu harus masuk terlebih dahulu sebelum dapat memperbarui lowongan pekerjaan, '
+      })  
+    } else {
+      this.setState({
+        alreadyLogin: 'yes',
+      })
+    }
   }
 
 	getData = async (updateData, jobId, resToken) => {
@@ -176,11 +160,16 @@ export default class Update extends Component {
     return result.data
    }
 
+  goBack = () => {
+    this.props.history.push('/')
+  }
+
   render() {
     const categoryArray = [
       'Pendidikan', 'Kuliner', 'Programmer', 'IT', 'Desain', 'Olah Raga', 'Kesenian',
       'Hukum', 'Administrasi', 'Lainnya', 'Manajemen', 'Matematika', 'Data', 'Ekonomi',
-      'Psikologi', 'Sosial', 'Otomotif', 'Kesehatan', 'Kedokteran', 'Pertanian', 'Peternakan'
+      'Psikologi', 'Sosial', 'Otomotif', 'Kesehatan', 'Kedokteran', 'Pertanian', 'Peternakan',
+      'Transportasi'
     ];
     categoryArray.sort();
     return (
@@ -188,7 +177,7 @@ export default class Update extends Component {
       {this.state.alreadyLogin==='no'&&
         (
         <Alert color="danger">
-          {this.state.alreadyLoginMsg} <Link to='/masuk'>log in here</Link>.
+          {this.state.alreadyLoginMsg} <Link to='/masuk'>masuk di sini</Link>.
         </Alert>
         )
       }
@@ -196,27 +185,27 @@ export default class Update extends Component {
       <Row>
         <Col md={6}>
         <FormGroup>
-          <Label for="nameLabel">Job's name</Label>
+          <Label for="nameLabel">Nama Pekerjaan</Label>
           <Input
             type="text"
             name="name"
             id="nameId"
             value={this.state.name}
             onChange={this.handleChange}
-            placeholder="New job's name.."
+            placeholder="nama pekerjaan yang baru.."
           />
         </FormGroup>
         </Col>
         <Col md={6}>
         <FormGroup>
-          <Label for="locationLabel">Job's location</Label>
+          <Label for="locationLabel">Lokasi Pekerjaan</Label>
           <Input
             type="text"
             name="location"
             id="locationId"
             value={this.state.location}
             onChange={this.handleChange}
-            placeholder="New job's location.."
+            placeholder="lokasi kerja yang baru.."
             
           />
         </FormGroup>
@@ -225,14 +214,14 @@ export default class Update extends Component {
       <Row>
         <Col md={6}>
         <FormGroup>
-          <Label for="categoryLabel">Job's category</Label>
+          <Label for="categoryLabel">Kategori</Label>
           <Input
             type="select"
             name="category"
             id="categoryId"
             value={this.state.category}
             onChange={this.handleChange}
-            placeholder="New job's category.."
+            placeholder="kategori pekerjaan yang baru.."
           >
           <option value=''>...</option>
           {categoryArray.map( (v) => (
@@ -243,14 +232,14 @@ export default class Update extends Component {
         </Col>
         <Col md={6}>
         <FormGroup>
-          <Label for="salaryLabel">Job's salary</Label>
+          <Label for="salaryLabel">Gaji</Label>
           <Input
             type="number"
             name="salary"
             id="salaryId"
             value={this.state.salary}
             onChange={this.handleChange}
-            placeholder="New job's salary.."
+            placeholder="besar gaji yang baru.."
             
           />
         </FormGroup>
@@ -259,14 +248,14 @@ export default class Update extends Component {
       <Row>
         <Col>
           <FormGroup>
-          <Label for="descriptionLabel">Job's description</Label>
+          <Label for="descriptionLabel">Deskripsi</Label>
           <Input
             type="textarea"
             name="description"
             id="descriptionId"
             value={this.state.description}
             onChange={this.handleChange}
-            placeholder="New job's description.."
+            placeholder="deskripsi pekerjaan yang baru.."
             
           />
         </FormGroup>
@@ -275,14 +264,14 @@ export default class Update extends Component {
       <Row>
         <Col>
       	<FormGroup>
-  	      <Label for="jobIdLabel">Job's ID</Label>
+  	      <Label for="jobIdLabel">ID Pekerjaan</Label>
     	    <Input
     	    	type="text"
     	    	name="jobId"
     	    	id="jobIdId"
     	    	value={this.state.jobId}
             onChange={this.handleChange}
-    	    	placeholder="ID of the job you want to update.."
+    	    	placeholder="ID pekerjaan yang diperbarui.."
     	    	required
     	    />
       	</FormGroup>
@@ -290,7 +279,13 @@ export default class Update extends Component {
       </Row>
       <Row>
         <Col>
-      	<Button>Update</Button>
+      	{this.state.isFromRead &&(
+        <React.Fragment>
+        <Button type="button" onClick={this.goBack}>Kembali</Button>
+        <span>&nbsp;</span>
+        </React.Fragment>
+        )}
+        <Button type="submit">Perbarui</Button>
         </Col>
       </Row>
       </Form>
@@ -306,10 +301,12 @@ export default class Update extends Component {
       )}
       {this.state.isGoLogin=='yes'&&(
       <Alert color="danger">
-        Cannot update a job. You must log in first!
+        Tidak dapat memperbarui lowongan pekerjaan. Kamu harus masuk terlebih dahulu!
       </Alert>
       )}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps)(Update);

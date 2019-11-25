@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import {Row, Col, Container, Button, ListGroup} from 'reactstrap'
+import {Row, Col, Container, Button, ListGroup, Alert} from 'reactstrap'
+import {Link} from 'react-router-dom'
 import axios from 'axios'
 // import {Button} from 'reactstrap'
 // import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
@@ -8,50 +9,38 @@ import {
   CardTitle, CardSubtitle
 } from 'reactstrap';
 
-class Toggle extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      isDetail: false,
-      location: '',
-      desc: '',
-      comId: '',
-    }
-  }
+import { connect } from 'react-redux';
+import {getCompany} from '../redux/actions/company'
 
-  goToDetail = () => {
-    this.setState( (state) => ({
-      isDetail: !state.isDetail,
-      location: this.state.location,
-      desc: this.props.desc,
-      comId: this.props.comId,
-    }))
+const mapStatetoProps = state => {
+  return {
+    company: state.company,
   }
-
-  render() {
-      return (
-        <div>
-        {this.state.isDetail&&(
-        <React.Fragment>
-        <CardSubtitle>Location: {this.state.location}</CardSubtitle>
-        <CardSubtitle>ID: {this.state.comId}</CardSubtitle>
-        <CardText>Description: {this.state.desc}</CardText>
-        </React.Fragment>
-        )}
-        <Button onClick={this.goToDetail}>...</Button>
-        </div>
-      )
-  }
-
 }
 
-export default class ReadCom extends Component {
+const mapDispatchToProps = dispatch => {
+  return {
+    getCompany: () => dispatch(getCompany())
+  }
+}
+
+const subStyle = {
+  fontSize: '0.9rem'
+}
+const titStyle = {
+  fontSize: '1.2rem'
+}
+const cardStyle = {
+  boxShadow: '4px 2px rgba(0,0,0,0.2)'
+}
+
+class ReadCom extends Component {
   constructor(props){
     super(props)
     // this.submitFormHandler = this.submitFormHandler.bind(this);
     // this.sendSearch = false;
     this.state = {
-      data: [],
+      // data: [],
       isLoading: true,
     }
     // this.handleInputChange = this.handleInputChange.bind(this);
@@ -67,12 +56,25 @@ export default class ReadCom extends Component {
   }
 
   componentDidMount(){
-    this.getData().then(data=>{
-      this.setState({
-        data: data.result,
+    this.props.getCompany()
+    this.setState({
         isLoading:false
-      })
     })
+    // if (this.props.company.data.length === 0) {
+    //   this.props.getCompany()
+    //   // console.log('tes')
+    //   // this.getData().then(data=>{
+    //   this.setState({
+    //     // data: data.result,
+    //     isLoading:false
+    //   })
+    //   // })
+    // } else {
+    //   this.setState({
+    //     // data: data.result,
+    //     isLoading:false
+    //   })
+    // }
   }
 
   // componentDidMount(){
@@ -86,49 +88,92 @@ export default class ReadCom extends Component {
   // }
 
   render() {
+    let arrSub = [];
+    let arrFull = [];
+    let resultArr = [];
+    let comFound = [];
+    if (this.props.company !== undefined) {
+      resultArr = this.props.company.data //this.props.searchResult
+      comFound = [...resultArr]
+      console.log('AAAAAAAAAAAAAAA')
+    }
+    // console.log(jobFound)
+    if (this.props.company !== undefined) {
+      comFound.forEach( (arr,i) => {
+        arrSub.push(arr);
+        if (arrSub.length===2) {
+          arrFull.push(arrSub);
+          arrSub = [];
+        }
+        if (comFound.length%2===1 && comFound.length===i+1) {
+          arrFull.push(arrSub);
+        }
+      });
+      console.log(resultArr)
+    }
     return (
       <Container>
-      <Row className='justify-content-md-center'>
-        <ListGroup>
-          {this.state.isLoading&&(
-            <Col>Loading...</Col>
-          )}
-          {!this.state.isLoading&&
-            <React.Fragment>
-            {this.state.data.map((v,i)=>(
-              <div key={v.id}>
-                <Card>
-                  <CardImg top width="100%" src="" alt='' />
-                  <CardBody>
-                    <CardTitle>{v.name}</CardTitle>
-                    <CardSubtitle>Location: {v.location}</CardSubtitle>
-                    <CardSubtitle>ID: {v.id}</CardSubtitle>
-                    <CardText>Description: {v.description}</CardText>
-                  </CardBody>
-                </Card>
-              </div>
-            ))}
-            </React.Fragment>
-          }
-        </ListGroup>
-      </Row>
-      <Row>
-        <Col>
-        
-          {this.state.prevAble&&
-          <React.Fragment>
-          <Button color='primary' onClick={()=>this.buttonPress(this.state.prev)}>Prev</Button>
+      {this.state.isLoading === true
+      ?
+        <p> Loading... </p>
+      :
+        <Alert color="success">
+          {resultArr.length} perusahaan ditemukan! 
+        </Alert>
+      }
+      {arrFull.map( (v,i) => (
+        <React.Fragment key={i}>
+        <Row>
+        {v.map( (vv) => (
+          <React.Fragment key={vv.id}>
+          <Col md={6}>
+            <Card style={cardStyle}>
+              <CardImg top width="100%" src="" alt={vv.logo} />
+              <CardBody>
+                <Row>
+                  <Col>
+                  <CardTitle style={titStyle}><b>{vv.name}</b></CardTitle>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                  <CardSubtitle style={subStyle}>Location: {vv.location}</CardSubtitle>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                  <CardSubtitle style={subStyle}>Lowongan: {vv.njob } pekerjaan</CardSubtitle>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                  <CardText style={subStyle}>Description: {vv.description}</CardText>
+                  </Col>
+                </Row>
+                
+                <Row>
+                  <Col md={3}>
+                  <div style={subStyle}><Link to={{ pathname:"/perbaruicom", state:vv }}>Perbarui</Link></div>
+                  </Col>
+                  <Col md={3}>
+                  <div style={subStyle}><Link to={{ pathname:"/hapuscom", state:vv }}>Hapus</Link></div>
+                  </Col>
+                  <Col md={6}>
+                  <div style={subStyle}><Link to={{ pathname:"/tambah", state:vv }}>Tambah Lowongan</Link></div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
           </React.Fragment>
-          }
-          {this.state.nextAble&&
-          <React.Fragment>
-          <span>&nbsp;</span><Button color='primary' onClick={()=>this.buttonPress(this.state.next)}>Next</Button>
-          </React.Fragment>
-          }
-        
-        </Col>
-      </Row>
+        ))}
+        </Row>
+        <br />
+        </React.Fragment>
+      ))}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps, mapDispatchToProps)(ReadCom);

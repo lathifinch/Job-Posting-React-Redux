@@ -11,6 +11,14 @@ import {
   DropdownItem,
   Container } from 'reactstrap';
 
+import { connect } from 'react-redux';
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+  }
+}
+
 const MyNavBar = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -64,19 +72,27 @@ const MyNavBar = (props) => {
 
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
-                ...
+                {props.user.username === '' ? (
+                  "..."
+                ) : (
+                  props.user.username
+                )}
               </DropdownToggle>
               <DropdownMenu right>
+                {props.user.token === '' ? (
+                <React.Fragment>
                 <DropdownItem>
                   <Link to="/masuk">Masuk</Link>
                 </DropdownItem>
                 <DropdownItem>
                   <Link to="/daftar">Daftar</Link>
                 </DropdownItem>
-                <DropdownItem divider />
+                </React.Fragment>
+                ) : (
                 <DropdownItem>
                   <Link to="/keluar">Keluar</Link>
                 </DropdownItem>
+                )}
               </DropdownMenu>
             </UncontrolledDropdown>
 
@@ -87,4 +103,4 @@ const MyNavBar = (props) => {
   );
 }
 
-export default MyNavBar;
+export default connect(mapStatetoProps)(MyNavBar);

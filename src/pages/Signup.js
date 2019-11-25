@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from 'reactstrap';
 import axios from 'axios'
 import qs from 'qs'
 
@@ -113,7 +113,7 @@ export default class Signup extends Component {
     	    	id="usernameId"
     	    	value={this.state.username}
             onChange={this.handleChange}
-    	    	placeholder="enter username.."
+    	    	placeholder="masukkan username.."
             required
     	    />
       	</FormGroup>
@@ -125,7 +125,7 @@ export default class Signup extends Component {
     	    	id="emailId"
     	    	value={this.state.email}
             onChange={this.handleChange}
-    	    	placeholder="enter email.."
+    	    	placeholder="masukkan email.."
             required
     	    />
       	</FormGroup>
@@ -137,16 +137,21 @@ export default class Signup extends Component {
         		id="passwordId"
         		value={this.state.password}
             onChange={this.handleChange}
-        		placeholder="enter password.."
+        		placeholder="masukkan password.."
             required
         	/>
       	</FormGroup>
-      	<Button>Register</Button>
+      	<Button>Daftar</Button>
       </Form>
       {this.state.isSignup=='yes'&&(
+      <React.Fragment>
       <Alert color="success">
         {this.state.signupMessage}
       </Alert>
+      <div>
+        <Spinner color="success" />
+      </div>
+      </React.Fragment>
       )}
       {this.state.isSignup=='no'&&(
       <Alert color="danger">
@@ -155,7 +160,7 @@ export default class Signup extends Component {
       )}
       {this.state.isGoLogout=='yes'&&(
       <Alert color="danger">
-        Cannot register. You must log out first!
+        Tidak dapat mendaftar. Kamu harus keluar terlebih dahulu!
       </Alert>
       )}
       </Container>

@@ -1,29 +1,34 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactstrap';
-import axios from 'axios'
-import qs from 'qs'
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom'
 
-// import NavBar from './NavBar'
+import { connect } from 'react-redux';
+import {userLogin} from '../redux/actions/user'
 
-export default class Login extends Component {
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    userLogin: (username, password) => dispatch(userLogin(username, password))
+  }
+}
+
+class Login extends Component {
 
 	constructor(props) {
     super(props)
     this.state = {
     	username: '',
     	password: '',
-    	isLogin: '',
-    	loginMessage: '',
+      isSubmit: false,
       alreadyLogin: '',
       alreadyLoginMsg: '',
       isGoLogout: ''
     }
-  }
-
-	someFn = () => {
-		const isLogedin = true;
-    this.props.callbackFromParent(isLogedin);
   }
 
 	handleChange = (event) => {
@@ -38,114 +43,98 @@ export default class Login extends Component {
 
 	handleSubmit = (event) => {
     event.preventDefault();
+    
+    if (this.props.user.token !== '') {
+      this.setState({
+        isGoLogout: 'yes'
+      })
+    } else {
+      this.setState({
+        isSubmit: true,
+      })
+      // console.log('belum login')
+      const username = this.state.username;
+      const password = this.state.password;
+      this.setState({
+        username: '',
+        password: '',
+      })
+      // setTimeout(() => this.props.history.push('/'), 3000)
+      this.props.userLogin(username, password)
+      // if ( !this.props.user.isLoading && !this.props.user.isError ) {
+      //   this.setState({
+      //     isLogin: 'yes',
+      //     loginMessage: this.props.user.loginMessage,
+      //   })
+      // }
+      // if ( !this.props.user.isLoading && this.props.user.isError ) {
+      //   this.setState({
+      //     isLogin: 'no',
+      //     loginMessage: this.props.user.loginMessage,
+      //   })
+      // }
 
-    this.loadToken('token')
-    .then( res0 => {
-      if (res0 !== null) {
-        this.setState({
-          isGoLogout: 'yes'
-        })
-      } else {
-
-        const username = this.state.username;
-        const password = this.state.password;
-        const loginData = {
-        	'username': username,
-        	'password': password,
-        }
-        // const loginData = event.target;
-        console.log(loginData)
-        this.setState({
-          username: '',
-          password: '',
-        })
-        this.getData(loginData)
-        .then(res=>{
-        	console.log('result')
-        	console.log(res)
-        	this.setState({
-        		isLogin: 'yes',
-          	loginMessage: res.message,
-        	})
-        	// res.result.authorization
-        	// res.result.message
-        	localStorage.setItem('token', res.result.authorization);
-          localStorage.setItem('username', res.message.substring(9, res.message.length));
-   	    	// localStorage.getItem('myData');
-   	    	console.log('token was saved to local')
-   	    	// this.someFn()
-   	    	setTimeout(() => this.props.history.push('/'), 3000)
-   	    	// return <NavBar isLogedin={true}/>
-        })
-        .catch(err=>{
-        	console.log('error')
-        	console.log(err.response.data)
-        	this.setState({
-        		isLogin: 'no',
-          	loginMessage: err.response.data.status + ', '
-        			+ err.response.data.message,
-        	})
-        })
-      }
-    })
-    .catch( err0 => {
-      console.log(err0)
-    })
+      // console.log(this.props.user.isError)
+      // if ( !this.props.user.isLoading && !this.props.user.isError ) {
+      //   this.setState({
+      //   	isLogin: 'yes',
+      //    	loginMessage: this.props.user.loginMessage,
+      //   })
+      // }
+      // if ( !this.props.user.isLoading && this.props.user.isError ) {
+      //   this.setState({
+      //     isLogin: 'no',
+      //     loginMessage: this.props.user.loginMessage,
+      //   })
+      // }
+    }
   }
 
-  getData = async (loginData) => {
-    const result = await axios({
-  		method: 'post',
-  		url: 'http://localhost:8080/login',
-  		data: qs.stringify(loginData),
-  		headers: {
-    		'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-  		}
-		})
-    return result.data
-   }
+  // goToLogin = async (username, password) => {
+  //   await this.props.userLogin(username, password)
+  //   return []
+  // }
 
   componentWillMount() {
-    this.loadToken('token')
-    .then( res => {
-      if (res === null) {
-        this.setState({
-          alreadyLogin: 'no'
-        })  
-      } else {
-        this.loadToken('username')
-        .then( res2 => {
-          this.setState({
-            alreadyLogin: 'yes',
-            alreadyLoginMsg: 'You were already loged in as ' + res2
-          })
-        })
-        .catch( err2 => {
-          console.log(err2)
-        })
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    })
-  }
-
-  loadToken = async (keyToken) => {
-    const resultToken = await localStorage.getItem(keyToken);
-    return resultToken
+    if (this.props.user.token === '') {
+      this.setState({
+        alreadyLogin: 'no'
+      })
+    } else {
+      this.setState({
+        alreadyLogin: 'yes',
+        alreadyLoginMsg: 'Kamu sudah masuk sebagai ' + this.props.user.username
+      })
+    }
   }
 
   render() {
+    // console.log(this.props.user.isError)
+    let isLogin = ''
+    let loginMessage = ''
+    if ( this.state.isSubmit && !this.props.user.isLoadingIn && !this.props.user.isErrorIn ) {
+      // this.setState({
+      isLogin = 'yes'
+      loginMessage = this.props.user.loginMessage
+      setTimeout(() => this.props.history.push('/'), 3000)
+      // })
+    }
+    if ( this.state.isSubmit && !this.props.user.isLoadingIn && this.props.user.isErrorIn ) {
+      // this.setState({
+      isLogin = 'no'
+      loginMessage = this.props.user.loginMessage
+      // })
+    }
     return (
     	<Container>
-      {this.state.alreadyLogin==='yes'?
+      {this.state.alreadyLogin == 'yes'?
         (
         <Alert color="danger">
           {this.state.alreadyLoginMsg}
         </Alert>
         ):(
           <Alert color="info">
-            Haven't registered yet? <Link to='/daftar'>sign up here</Link>!
+            Belum mendaftar? <Link to='/daftar'>daftar di sini</Link>!
           </Alert>
         )
       }
@@ -158,7 +147,7 @@ export default class Login extends Component {
     	    	id="usernameId"
     	    	value={this.state.username}
             onChange={this.handleChange}
-    	    	placeholder="enter username.."
+    	    	placeholder="masukkan username.."
             required
     	    />
       	</FormGroup>
@@ -170,28 +159,35 @@ export default class Login extends Component {
         		id="passwordId"
         		value={this.state.password}
             onChange={this.handleChange}
-        		placeholder="enter password.."
+        		placeholder="masukkan password.."
             required
         	/>
       	</FormGroup>
-      	<Button>Log in</Button>
+      	<Button>Masuk</Button>
       </Form>
-      {this.state.isLogin=='yes'&&(
+      {isLogin==='yes'&&(
+      <React.Fragment>
       <Alert color="success">
-        {this.state.loginMessage}
+        {loginMessage}
+      </Alert>
+      <div>
+        <Spinner color="success" />
+      </div>
+      </React.Fragment>
+      )}
+      {isLogin==='no'&&(
+      <Alert color="danger">
+        {loginMessage}
       </Alert>
       )}
-      {this.state.isLogin=='no'&&(
+      {this.state.isGoLogout==='yes'&&(
       <Alert color="danger">
-        {this.state.loginMessage}
-      </Alert>
-      )}
-      {this.state.isGoLogout=='yes'&&(
-      <Alert color="danger">
-        Cannot log in. You must log out first!
+        Tidak dapat masuk. Kamu harus keluar terlebih dahulu!
       </Alert>
       )}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps, mapDispatchToProps)(Login);

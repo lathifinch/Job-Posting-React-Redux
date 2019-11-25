@@ -3,17 +3,48 @@ import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactst
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
-export default class Delete extends Component {
+import { connect } from 'react-redux';
+import {delCompany} from '../redux/actions/company'
+
+const mapStatetoProps = state => {
+  return {
+    user: state.user,
+    company: state.company,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    delCompany: (comId, resToken) => dispatch(delCompany(comId, resToken))
+  }
+}
+
+class DeleteCom extends Component {
 
 	constructor(props) {
     super(props)
-    this.state = {
-    	comId: '',
-    	deleteMessage: '',
-    	isDeleted: '',
-      alreadyLogin: '',
-      alreadyLoginMsg: '',
-      isGoLogin: '',
+    const data = props.location.state
+    if (data===undefined){
+      this.state = {
+      	comId: '',
+      	deleteMessage: '',
+      	isDeleted: '',
+        alreadyLogin: '',
+        alreadyLoginMsg: '',
+        isGoLogin: '',
+        isSubmit: false,
+      }
+    } else {
+      this.state = {
+        comId: data.id,
+        deleteMessage: '',
+        isDeleted: '',
+        alreadyLogin: '',
+        alreadyLoginMsg: '',
+        isGoLogin: '',
+        isFromRead: true,
+        isSubmit: false,
+      }
     }
   }
 
@@ -30,100 +61,99 @@ export default class Delete extends Component {
 	handleSubmit = (event) => {
     event.preventDefault();
 
-    this.loadToken('username')
-    .then( res0 => {
-      if (res0 !== 'lathifalrasyid') {
-        this.setState({
-          isGoLogin: 'yes'
-        })
-      } else {
+    if (this.props.user.username !== 'lathifalrasyid') {
+      this.setState({
+        isGoLogin: 'yes'
+      })
+    } else {
 
-        const comId = this.state.comId;
-        // const deleteData = {
-        // 	'jobId': jobId,
-        // }
-        // const deleteData = jobId;
-        // const loginData = event.target;
-        // console.log(deleteData)
-        this.setState({
-          comId: '',
-        })
-        this.loadToken('token')
-        .then(resToken=>{
-        this.getData(comId, resToken)
-        .then(res=>{
-        	console.log('result')
-        	console.log(res)
-        	this.setState({
-        		isDeleted: 'yes',
-          	deleteMessage: res.message,
-        	})
-        	// setTimeout(() => this.props.history.push('/'), 3000)
-        	// res.result.authorization
-        	// res.result.message
-        	// localStorage.setItem('token', res.result.authorization);
-   	    	// localStorage.getItem('myData');
-   	    	// console.log('token was saved to local')
-        })
-        .catch(err=>{
-        	console.log('error')
-        	console.log(err.response.data)
-        	this.setState({
-        		isDeleted: 'no',
-          	deleteMessage: err.response.data.status + ', '
-        			+ err.response.data.message,
-        	})
-        })
-        })
-        .catch(errToken=>{
-        	console.log('error')
-        	console.log(errToken)
-        })
-      }
-    })
-    .catch( err0 => {
-      console.log(err0)
-    })
+      this.setState({
+        isSubmit: true,
+      })
+
+      const comId = this.state.comId;
+      // const deleteData = {
+      // 	'jobId': jobId,
+      // }
+      // const deleteData = jobId;
+      // const loginData = event.target;
+      // console.log(deleteData)
+      this.setState({
+        comId: '',
+      })
+      this.props.delCompany(comId, this.props.user.token)
+      // this.getData(comId, this.props.user.token)
+      // .then(res=>{
+      // 	console.log('result')
+      // 	console.log(res)
+      // 	this.setState({
+      // 		isDeleted: 'yes',
+      //   	deleteMessage: res.message,
+      // 	})
+      //  	// setTimeout(() => this.props.history.push('/'), 3000)
+      //  	// res.result.authorization
+      //  	// res.result.message
+      //  	// localStorage.setItem('token', res.result.authorization);
+ 	    // 	// localStorage.getItem('myData');
+ 	    // 	// console.log('token was saved to local')
+      // })
+      // .catch(err=>{
+      // 	console.log('error')
+      //  	console.log(err.response.data)
+      //  	this.setState({
+      //  		isDeleted: 'no',
+      //    	deleteMessage: err.response.data.status + ', '
+      //  			+ err.response.data.message,
+      //  	})
+      // })
+    }
   }
 
   componentWillMount() {
-    this.loadToken('username')
-    .then( res => {
-      if (res !== 'lathifalrasyid') {
-        this.setState({
-          alreadyLogin: 'no',
-          alreadyLoginMsg: 'Only admin can delete a company.'
-        })  
-      } else {
-        this.setState({
-          alreadyLogin: 'yes',
-        })
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    })
+    if (this.props.user.username !== 'lathifalrasyid') {
+      this.setState({
+        alreadyLogin: 'no',
+        alreadyLoginMsg: 'Hanya admin yang dapat menghapus perusahaan.'
+      })  
+    } else {
+      this.setState({
+        alreadyLogin: 'yes',
+      })
+    }
   }
 
-  loadToken = async (keyToken) => {
-  	const resultToken = await localStorage.getItem(keyToken);
-  	return resultToken
-  }
+	// getData = async (comId, resToken) => {
+ //    const result = await axios({
+ //  		method: 'delete',
+ //  		url: 'http://localhost:8080/company/' + comId,
+ //  		// data: qs.stringify(loginData),
+ //  		headers: {
+ //    		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+ //    		'authorization': resToken,
+ //  		}
+	// 	})
+ //    return result.data
+ //   }
 
-	getData = async (comId, resToken) => {
-    const result = await axios({
-  		method: 'delete',
-  		url: 'http://localhost:8080/company/' + comId,
-  		// data: qs.stringify(loginData),
-  		headers: {
-    		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-    		'authorization': resToken,
-  		}
-		})
-    return result.data
-   }
+  goBack = () => {
+    this.props.history.push('/lihatcom')
+  }
 
   render() {
+    let isDeleted = ''
+    let deleteMessage = ''
+    if ( this.state.isSubmit && !this.props.company.isLoading && !this.props.company.isError ) {
+      // this.setState({
+      isDeleted = 'yes'
+      deleteMessage = this.props.company.deleteMessage
+      // })
+    }
+    if ( this.state.isSubmit && !this.props.company.isLoading && this.props.company.isError ) {
+      // this.setState({
+      isDeleted = 'no'
+      deleteMessage = this.props.company.deleteMessage
+      // })
+    }
     return (
       <Container>
       {this.state.alreadyLogin==='no'&&
@@ -135,35 +165,43 @@ export default class Delete extends Component {
       }
       <Form onSubmit={this.handleSubmit}>
 	      <FormGroup>
-  	      <Label for="comIdLabel">Company ID</Label>
+  	      <Label for="comIdLabel">ID Perusahaan</Label>
     	    <Input
     	    	type="text"
     	    	name="comId"
     	    	id="comIdId"
     	    	value={this.state.comId}
             onChange={this.handleChange}
-    	    	placeholder="Company ID you want to delete.."
+    	    	placeholder="ID perusahaan yang akan dihapus.."
     	    	required
     	    />
       	</FormGroup>
-      	<Button>Delete</Button>
+        {this.state.isFromRead &&(
+        <React.Fragment>
+        <Button type="button" onClick={this.goBack}>Kembali</Button>
+        <span>&nbsp;</span>
+        </React.Fragment>
+        )}
+      	<Button type="submit">Hapus</Button>
       </Form>
-      {this.state.isDeleted=='yes'&&(
+      {isDeleted=='yes'&&(
       <Alert color="success">
-        {this.state.deleteMessage}
+        {deleteMessage}
       </Alert>
       )}
-      {this.state.isDeleted=='no'&&(
+      {isDeleted=='no'&&(
       <Alert color="danger">
-        {this.state.deleteMessage}
+        {deleteMessage}
       </Alert>
       )}
       {this.state.isGoLogin=='yes'&&(
       <Alert color="danger">
-        Cannot delete a company. You are not an admin!
+        Tidak dapat menghapus perusahaan. Kamu bukan admin!
       </Alert>
       )}
       </Container>
     )
   }
 }
+
+export default connect(mapStatetoProps, mapDispatchToProps)(DeleteCom);

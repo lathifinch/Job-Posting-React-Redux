@@ -27,7 +27,8 @@ class CategoryList extends React.Component {
 		const categoryArray = [
 			'Pendidikan', 'Kuliner', 'Programmer', 'IT', 'Desain', 'Olah Raga', 'Kesenian',
 			'Hukum', 'Administrasi', 'Lainnya', 'Manajemen', 'Matematika', 'Data', 'Ekonomi',
-			'Psikologi', 'Sosial', 'Otomotif', 'Kesehatan', 'Kedokteran', 'Pertanian', 'Peternakan'
+			'Psikologi', 'Sosial', 'Otomotif', 'Kesehatan', 'Kedokteran', 'Pertanian', 'Peternakan',
+			'Transportasi'
 		];
 		categoryArray.sort();
 		return (
@@ -268,7 +269,7 @@ class SearchResult extends React.Component {
 				<p> Loading... </p>
     	:
     		<Alert color="success">
-          {resultObj.pagination.totalData} jobs found! 
+          {resultObj.pagination.totalData} lowongan pekerjaan ditemukan! 
         </Alert>
     	}
 			{arrFull.map( (v,i) => (
