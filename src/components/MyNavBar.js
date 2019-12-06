@@ -10,8 +10,9 @@ import {
   DropdownMenu,
   DropdownItem,
   Container } from 'reactstrap';
-
+import { FaHome, FaUser } from 'react-icons/fa';
 import { connect } from 'react-redux';
+import bgimage from '../images/myJum2.jpg'
 
 const mapStatetoProps = state => {
   return {
@@ -25,55 +26,56 @@ const MyNavBar = (props) => {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
+        <div style={style.wrapper}>
+      <Navbar style={{hover:{color:'#000'}}} expand="md">
     <Container>
-      <Navbar color="light" light expand="md">
-        <Link to="/">Kerjarek</Link>
+        <Link style={{color: '#fff'}} to="/"><FaHome size={24} /></Link>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="ml-auto" navbar>
 
             <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
+              <DropdownToggle style={{color: '#fff', dropdownItem:{hover:{color:'pink'}} }} nav caret>
                 Pekerjaan
               </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem>
-                  <Link to="/tambah">Buat Lowongan</Link>
+                  <Link style={{color: '#000'}} to="/tambah">Buat Lowongan</Link>
                 </DropdownItem>
                 <DropdownItem>
-                  <Link to="/perbarui">Perbarui Lowongan</Link>
+                  <Link style={{color: '#000'}} to="/perbarui">Perbarui Lowongan</Link>
                 </DropdownItem>
                 <DropdownItem>
-                  <Link to="/hapus">Hapus Lowongan</Link>
+                  <Link style={{color: '#000'}} to="/hapus">Hapus Lowongan</Link>
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
 
             <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
+              <DropdownToggle style={{color: '#fff'}} nav caret>
                 Perusahaan
               </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem>
-                  <Link to="/lihatcom">Lihat Perusahaan</Link>
+                  <Link style={{color: '#000'}} to="/lihatcom">Lihat Perusahaan</Link>
                 </DropdownItem>
                 <DropdownItem divider />
                 <DropdownItem>
-                  <Link to="/tambahcom">Tambah Perusahaan (Admin)</Link>
+                  <Link style={{color: '#000'}} to="/tambahcom">Tambah Perusahaan (Admin)</Link>
                 </DropdownItem>
                 <DropdownItem>
-                  <Link to="/perbaruicom">Perbarui Perusahaan (Admin)</Link>
+                  <Link style={{color: '#000'}} to="/perbaruicom">Perbarui Perusahaan (Admin)</Link>
                 </DropdownItem>
                 <DropdownItem>
-                  <Link to="/hapuscom">Hapus Perusahaan (Admin)</Link>
+                  <Link style={{color: '#000'}} to="/hapuscom">Hapus Perusahaan (Admin)</Link>
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
 
             <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
+              <DropdownToggle style={{color: '#fff'}} nav caret>
                 {props.user.username === '' ? (
-                  "..."
+                  <FaUser size={14} />
                 ) : (
                   props.user.username
                 )}
@@ -82,15 +84,15 @@ const MyNavBar = (props) => {
                 {props.user.token === '' ? (
                 <React.Fragment>
                 <DropdownItem>
-                  <Link to="/masuk">Masuk</Link>
+                  <Link style={{color: '#000'}} to="/masuk">Masuk</Link>
                 </DropdownItem>
                 <DropdownItem>
-                  <Link to="/daftar">Daftar</Link>
+                  <Link style={{color: '#000'}} to="/daftar">Daftar</Link>
                 </DropdownItem>
                 </React.Fragment>
                 ) : (
                 <DropdownItem>
-                  <Link to="/keluar">Keluar</Link>
+                  <Link style={{color: '#000'}} to="/keluar">Keluar</Link>
                 </DropdownItem>
                 )}
               </DropdownMenu>
@@ -98,9 +100,18 @@ const MyNavBar = (props) => {
 
           </Nav>
         </Collapse>
-      </Navbar>
     </Container>
+      </Navbar>
+      </div>
   );
+}
+
+const style = {
+  wrapper: {
+    backgroundImage: `url(${bgimage})`,
+    backgroundSize: 'cover',
+    marginBottom: '20px'
+  }
 }
 
 export default connect(mapStatetoProps)(MyNavBar);

@@ -92,7 +92,7 @@ const MyCarousel = (props) => {
         onExited={() => setAnimating(false)}
         key={item.src}
       >
-        <Card>
+        <Card style={{backgroundColor:'rgba(0,0,0,0)', color:'white', border:'none'}}>
           <CardBody className="text-center">
             <CardTitle>
               <b>{item.name}</b> { 'tersedia ' + item.njob + ' lowongan pekerjaan.' }
@@ -110,7 +110,7 @@ const MyCarousel = (props) => {
   // }
 
   return (
-    <Container>
+    <Container style={{marginTop:'50px', marginBottom:'50px',}}>
     <Row>
     <Col md={0}></Col>
     <Col md={12}>

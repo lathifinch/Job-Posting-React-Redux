@@ -82,18 +82,28 @@ class UpdateCom extends Component {
 
       const comId = this.state.comId;
 
+      const fd = new FormData()
       const updateData = {};
       for (var o in this.state) {
         if (Object.hasOwnProperty.call(this.state, o)) {
         	if (!['isUpdated', 'updateMessage', 'alreadyLogin', 'alreadyLoginMsg',
-            'isGoLogin', 'comId', 'isFromRead', 'isSubmit'].includes(o)
+            'isGoLogin', 'comId', 'isFromRead', 'isSubmit', 'logo'].includes(o)
             && this.state[o] !== "") {
         		  updateData[o] = this.state[o];
+              console.log('+++++++++++++++++++++++')
+              console.log(event.target[o+'Id'].value)
+              fd.append(o, event.target[o+'Id'].value)
           }
         }
       }
       // delete updateData['jobId']
       console.log(updateData)
+
+      console.log('==================')
+      console.log(event.target.logoId.files[0])
+      if (event.target.logoId.files[0]!==undefined) {
+        fd.append('logo', event.target.logoId.files[0])
+      }
 
       this.setState({
       	comId: '',
@@ -107,7 +117,7 @@ class UpdateCom extends Component {
 
 	    if (Object.keys(updateData).length !== 0) {
 
-        this.props.editCompany(updateData, comId, this.props.user.token)
+        this.props.editCompany(fd, comId, this.props.user.token) //updateData
 
         // this.getData(updateData, comId, this.props.user.token)
         // .then(res=>{
@@ -236,10 +246,11 @@ class UpdateCom extends Component {
         <FormGroup>
           <Label for="logoLabel">Logo Perusahaan</Label>
           <Input
-            type="text"
+            type="file"
             name="logo"
             id="logoId"
-            value={this.state.logo}
+            accept='image/*'
+            // value={this.state.logo}
             onChange={this.handleChange}
             placeholder="logo perusahaan yang baru.."
             

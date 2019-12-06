@@ -14,7 +14,7 @@ export const addCompany = (createData, resToken) => {
 		payload: axios({
   		method: 'post',
   		url: 'http://localhost:8080/company',
-  		data: qs.stringify(createData),
+  		data: createData,
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
     		'authorization': resToken,
@@ -29,7 +29,7 @@ export const editCompany = (updateData, comId, resToken) => {
 		payload: axios({
   		method: 'patch',
   		url: 'http://localhost:8080/company/' + comId,
-  		data: qs.stringify(updateData),
+  		data: updateData,
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
     		'authorization': resToken,

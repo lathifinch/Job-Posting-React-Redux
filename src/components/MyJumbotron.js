@@ -1,6 +1,7 @@
 import React from 'react';
+// import { Link } from 'react-router-dom'
 import { Jumbotron, Button, Container } from 'reactstrap';
-import bgimage from '../images/jumbotron-back4.jpg'
+import bgimage from '../images/myJum2.jpg'
 
 const goMasuk = (props) => {
     let path = `/masuk`;
@@ -9,8 +10,9 @@ const goMasuk = (props) => {
 
 const MyJumbotron = (props) => {
   return (
-    <Container>
-      <Jumbotron style={{ backgroundImage: `url(${bgimage})`, backgroundSize: 'cover' }}>
+    <div style={style.wrapper}>
+    <Jumbotron style={style.jumbo}>
+      <Container>
         <h1 className="display-3">Kerjarek!</h1>
         <p className="lead">Ini adalah website sederhana untuk mencari pekerjaan, untuk membuat lowongan pekerjaan, untuk kamu para pencari kerja atau pemilik perusahaan yang sedang membutuhkan karyawan.</p>
         <hr className="my-2" />
@@ -18,9 +20,23 @@ const MyJumbotron = (props) => {
         <p className="lead">
           <Button onClick={()=>goMasuk(props)} color="primary">Masuk</Button>
         </p>
-      </Jumbotron>
-    </Container>
+      </Container>
+    </Jumbotron>
+    </div>
   );
 };
+
+const style = {
+  jumbo: {
+    marginTop: -78,
+    backgroundSize: 'cover',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    color: '#fff',
+  },
+  wrapper: {
+    backgroundImage: `url(${bgimage})`,
+    backgroundSize: 'cover',
+  }
+}
 
 export default MyJumbotron;

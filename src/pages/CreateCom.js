@@ -60,25 +60,33 @@ class CreateCom extends Component {
         isSubmit: true,
       })
 
-      const name = this.state.name;
-      const desc = this.state.desc;
-      const logo = this.state.logo;
-      const loc = this.state.loc;
-      const createData = {
-      	'name': name,
-      	'description': desc,
-      	'logo': logo,
-      	'location': loc,
-      }
+      const fd = new FormData()
+      fd.append('name', event.target.name.value)
+      fd.append('location', event.target.loc.value)
+      fd.append('description', event.target.desc.value)
+      fd.append('logo',event.target.logo.files[0])
+
+      // const name = this.state.name;
+      // const desc = this.state.desc;
+      // const logo = this.state.logo;
+      // const loc = this.state.loc;
+      // const createData = {
+      // 	'name': name,
+      // 	'description': desc,
+      // 	'logo': logo,
+      // 	'location': loc,
+      // }
       // const loginData = event.target;
-      console.log(createData)
+      console.log('+++++++++++++++++++++++')
+      console.log(event.target.logo.files[0])
+      console.log(fd) //createData
       this.setState ({
       	name: '',
       	desc: '',
       	logo: '',
       	loc: '',
       })
-      this.props.addCompany(createData, this.props.user.token)
+      this.props.addCompany(fd, this.props.user.token) //createData
       // .then(res=>{
       // 	console.log('result')
       //  	console.log(res)
@@ -157,11 +165,11 @@ class CreateCom extends Component {
       }
       <Form onSubmit={this.handleSubmit}>
 	      <FormGroup>
-  	      <Label for="nameLabel">Nama Perusahaan</Label>
+  	      <Label for="name">Nama Perusahaan</Label>
     	    <Input
     	    	type="text"
     	    	name="name"
-    	    	id="nameId"
+    	    	id="name"
     	    	value={this.state.name}
             onChange={this.handleChange}
     	    	placeholder="nama perusahaan.."
@@ -169,11 +177,11 @@ class CreateCom extends Component {
     	    />
       	</FormGroup>
         <FormGroup>
-          <Label for="locLabel">Lokasi</Label>
+          <Label for="loc">Lokasi</Label>
           <Input
             type="text"
             name="loc"
-            id="locId"
+            id="loc"
             value={this.state.loc}
             onChange={this.handleChange}
             placeholder="lokasi perusahaan.."
@@ -181,6 +189,22 @@ class CreateCom extends Component {
           />
         </FormGroup>
         <FormGroup>
+          <Label for="logo">Logo</Label>
+          <Input
+            type="file"
+            name="logo"
+            id="logo"
+            accept='image/*'
+            value={this.state.logo}
+            onChange={this.handleChange}
+            placeholder="logo perusahaan.."
+            required
+          />
+          {/*<FormText color="primary">
+            Upload an Image of the company logo. (file must be in Image format)
+          </FormText>*/}
+        </FormGroup>
+        {/*<FormGroup>
           <Label for="logoLabel">Logo</Label>
           <Input
             type="text"
@@ -191,13 +215,13 @@ class CreateCom extends Component {
             placeholder="logo perusahaan.."
             required
           />
-        </FormGroup>
+        </FormGroup>*/}
       	<FormGroup>
-  	      <Label for="descLabel">Deskripsi</Label>
+  	      <Label for="desc">Deskripsi</Label>
     	    <Input
     	    	type="textarea"
     	    	name="desc"
-    	    	id="descId"
+    	    	id="desc"
     	    	value={this.state.desc}
             onChange={this.handleChange}
     	    	placeholder="deskripsi perusahaan.."

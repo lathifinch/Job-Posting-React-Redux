@@ -12,6 +12,9 @@ import {
 import { connect } from 'react-redux';
 import {getCompany} from '../redux/actions/company'
 
+import { FaTrash, FaEdit } from 'react-icons/fa';
+import { MdAddCircle } from 'react-icons/md';
+
 const mapStatetoProps = state => {
   return {
     company: state.company,
@@ -128,23 +131,19 @@ class ReadCom extends Component {
           <React.Fragment key={vv.id}>
           <Col md={6}>
             <Card style={cardStyle}>
-              <CardImg top width="100%" src="" alt={vv.logo} />
+              
               <CardBody>
                 <Row>
+                  <Col md={3}>
+                  <CardImg top width="100%" height="100%" src={vv.logo} alt={vv.logo} />
+                  </Col>
                   <Col>
                   <CardTitle style={titStyle}><b>{vv.name}</b></CardTitle>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
                   <CardSubtitle style={subStyle}>Location: {vv.location}</CardSubtitle>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
                   <CardSubtitle style={subStyle}>Lowongan: {vv.njob } pekerjaan</CardSubtitle>
                   </Col>
                 </Row>
+                
                 <Row>
                   <Col>
                   <CardText style={subStyle}>Description: {vv.description}</CardText>
@@ -153,13 +152,13 @@ class ReadCom extends Component {
                 
                 <Row>
                   <Col md={3}>
-                  <div style={subStyle}><Link to={{ pathname:"/perbaruicom", state:vv }}>Perbarui</Link></div>
+                  <div style={subStyle}><Link to={{ pathname:"/perbaruicom", state:vv }}><FaEdit/> Perbarui</Link></div>
                   </Col>
                   <Col md={3}>
-                  <div style={subStyle}><Link to={{ pathname:"/hapuscom", state:vv }}>Hapus</Link></div>
+                  <div style={subStyle}><Link to={{ pathname:"/hapuscom", state:vv }}><FaTrash/> Hapus</Link></div>
                   </Col>
                   <Col md={6}>
-                  <div style={subStyle}><Link to={{ pathname:"/tambah", state:vv }}>Tambah Lowongan</Link></div>
+                  <div style={subStyle}><Link to={{ pathname:"/tambah", state:vv }}><MdAddCircle/> Tambah Lowongan</Link></div>
                   </Col>
                 </Row>
               </CardBody>

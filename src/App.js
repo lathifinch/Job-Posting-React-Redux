@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {BrowserRouter,Route,Switch} from 'react-router-dom'
 
 import MyNavBar from './components/MyNavBar'
+import Footer from './components/Footer'
 
 import Home from './pages/Home'
 import Create from './pages/Create'
@@ -46,6 +47,7 @@ export default class App extends Component {
           <Route path='/pekerjaan/:jobId' component={DetailJob} exact />
           <Route component={PageNotFound} />
         </Switch>
+        <Footer />
       </BrowserRouter>
     )
   }

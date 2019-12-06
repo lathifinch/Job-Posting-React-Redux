@@ -1,8 +1,22 @@
 import React from 'react';
 import {Container, Row, Col, Form, FormGroup, Input, Button, Alert} from 'reactstrap'
-import {Card, CardHeader, CardBody, CardTitle, Label, CardSubtitle, CardFooter} from 'reactstrap'
+import {Card, CardHeader, CardBody, CardTitle, CardImg, Label, CardSubtitle, CardFooter} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
+
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  Nav,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from 'reactstrap';
+
+import { FaTrash, FaEdit, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave } from 'react-icons/fa';
+import { MdLabelOutline, MdUpdate } from 'react-icons/md';
 
 class CategoryList extends React.Component {
 	constructor(props) {
@@ -183,56 +197,91 @@ class SearchBox extends React.Component {
 }
 
 const subStyle = {
-	fontSize: '0.8rem'
+	fontSize: '0.8rem',
+	marginBottom: '5px',
 }
 const titStyle = {
 	fontSize: '1.2rem'
 }
 const cardStyle = {
-	boxShadow: '4px 2px rgba(0,0,0,0.2)'
+	boxShadow: '4px 2px rgba(0,0,0,0.2)',
+	// paddingBottom: '10px',
 }
-
+  
 class JobCard extends React.Component {
+	constructor(){
+		super()
+		this.state={
+			isOpen:false
+		}
+	}
+	toggle = () => {
+		this.setState({
+			isOpen:!this.state.isOpen
+		})
+	}
 	render() {
 		const jobsData = this.props.data;
 		return (
 			<Card style={cardStyle}>
+			<CardHeader style={{margin:0, padding:0}} >
+				<Navbar style={{margin:0, padding:0}} expand="md">
+					<Link style={{marginLeft:'15px', fontSize:'1.2rem'}} to={{ pathname:'/pekerjaan/' + jobsData.id, state:jobsData }}>{jobsData.jobs}</Link>
+					<NavbarToggler onClick={this.toggle} />
+        		<Collapse isOpen={this.state.isOpen} navbar>
+          		<Nav className="ml-auto" navbar>
+		            <UncontrolledDropdown nav inNavbar>
+		              <DropdownToggle style={{color:'#000'}} nav caret>
+		                
+		              </DropdownToggle>
+		              <DropdownMenu right>
+		                <DropdownItem>
+		                  <Link style={{color:'#000', fontSize:'0.8rem'}} to={{ pathname:"/perbarui", state:jobsData }}><FaEdit/> Perbarui</Link>
+		                </DropdownItem>
+		                <DropdownItem>
+		                  <Link style={{color:'#000', fontSize:'0.8rem'}} to={{ pathname:"/hapus", state:jobsData }}><FaTrash/> Hapus</Link>
+		                </DropdownItem>
+		              </DropdownMenu>
+		            </UncontrolledDropdown>
+            	</Nav>
+            </Collapse>
+				</Navbar>
+			</CardHeader>
 			<Container>
 			<Row>
-				<Col>
-				<CardTitle style={titStyle}><Link to={{ pathname:'/pekerjaan/' + jobsData.id, state:jobsData }}>{jobsData.jobs}</Link></CardTitle>
+				<Col md={4}>
+					<CardImg top width="100%" height="100%" src={jobsData.logo} alt={'logo perusahaan'} />
 				</Col>
-			</Row>
-			<Row>
-				<Col>
-				<CardSubtitle style={subStyle}>Perusahaan: {jobsData.company}</CardSubtitle>
-				</Col>
-			</Row>
-			<Row>
-				<Col>
-				<CardSubtitle style={subStyle}>Lokasi Kerja: {jobsData.location}</CardSubtitle>
-				</Col>
-				<Col>
-				<CardSubtitle style={subStyle}>Kategori: {jobsData.category}</CardSubtitle>
-				</Col>
-			</Row>
-			<Row>
-				<Col>
-				<CardSubtitle style={subStyle}>Gaji: {jobsData.salary}</CardSubtitle>
-				</Col>
-				<Col>
-				<CardSubtitle style={subStyle}>Diperbarui: {jobsData.date_updated.substring(0,10)}</CardSubtitle>
-				</Col>
-			</Row>
-			<Row>
-				<Col>
-				<p style={subStyle}><Link to={{ pathname:"/perbarui", state:jobsData }}>Perbarui</Link></p>
-				</Col>
-				<Col>
-				<p style={subStyle}><Link to={{ pathname:"/hapus", state:jobsData }}>Hapus</Link></p>
+				<Col style={{marginTop:'10px'}} md={8}>
+					<Row>
+						<Col>
+						<CardSubtitle style={subStyle}><FaBuilding/> Perusahaan: {jobsData.company}</CardSubtitle>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+						<CardSubtitle style={subStyle}><FaMapMarkerAlt/> Lokasi Kerja: {jobsData.location}</CardSubtitle>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+						<CardSubtitle style={subStyle}><MdLabelOutline/> Kategori: {jobsData.category}</CardSubtitle>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+						<CardSubtitle style={subStyle}><FaMoneyBillWave/> Gaji: {jobsData.salary}</CardSubtitle>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+						<CardSubtitle style={subStyle}><MdUpdate/> Diperbarui: {jobsData.date_updated.substring(0,10)}</CardSubtitle>
+						</Col>
+					</Row>
 				</Col>
 			</Row>
 			</Container>
+
 			</Card>
 		)
 	}
