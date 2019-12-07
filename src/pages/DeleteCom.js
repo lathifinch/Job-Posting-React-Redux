@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from 'reactstrap';
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
@@ -33,6 +33,7 @@ class DeleteCom extends Component {
         alreadyLoginMsg: '',
         isGoLogin: '',
         isSubmit: false,
+        isLoading: false,
       }
     } else {
       this.state = {
@@ -44,6 +45,7 @@ class DeleteCom extends Component {
         isGoLogin: '',
         isFromRead: true,
         isSubmit: false,
+        isLoading: false,
       }
     }
   }
@@ -58,7 +60,7 @@ class DeleteCom extends Component {
     });
   }
 
-	handleSubmit = (event) => {
+	handleSubmit = async (event) => {
     event.preventDefault();
 
     if (this.props.user.username !== 'lathifalrasyid') {
@@ -69,6 +71,7 @@ class DeleteCom extends Component {
 
       this.setState({
         isSubmit: true,
+        isLoading: true,
       })
 
       const comId = this.state.comId;
@@ -81,7 +84,10 @@ class DeleteCom extends Component {
       this.setState({
         comId: '',
       })
-      this.props.delCompany(comId, this.props.user.token)
+      await this.props.delCompany(comId, this.props.user.token)
+      this.setState({
+        isLoading: false,
+      })
       // this.getData(comId, this.props.user.token)
       // .then(res=>{
       // 	console.log('result')
@@ -184,6 +190,11 @@ class DeleteCom extends Component {
         )}
       	<Button type="submit">Hapus</Button>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {isDeleted=='yes'&&(
       <Alert color="success">
         {deleteMessage}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from 'reactstrap';
 import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
@@ -35,6 +35,7 @@ class CreateCom extends Component {
       alreadyLoginMsg: '',
       isGoLogin: '',
       isSubmit: false,
+      isLoading: false,
     }
   }
 
@@ -48,7 +49,7 @@ class CreateCom extends Component {
     });
   }
 
-	handleSubmit = (event) => {
+	handleSubmit = async (event) => {
     event.preventDefault();
 
     if (this.props.user.username !== 'lathifalrasyid') {
@@ -58,6 +59,7 @@ class CreateCom extends Component {
     } else {
       this.setState({
         isSubmit: true,
+        isLoading: true,
       })
 
       const fd = new FormData()
@@ -86,7 +88,14 @@ class CreateCom extends Component {
       	logo: '',
       	loc: '',
       })
-      this.props.addCompany(fd, this.props.user.token) //createData
+      console.log('===== addCompany =====')
+      await this.props.addCompany(fd, this.props.user.token) //createData
+      console.log('===== addCompany =====')
+      setTimeout(() =>
+        this.setState({
+          isLoading: false,
+        })
+      )
       // .then(res=>{
       // 	console.log('result')
       //  	console.log(res)
@@ -230,6 +239,11 @@ class CreateCom extends Component {
       	</FormGroup>
       	<Button>Create</Button>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {isCreated=='yes'&&(
       <Alert color="success">
         {createMessage}

@@ -27,7 +27,8 @@ class Login extends Component {
       isSubmit: false,
       alreadyLogin: '',
       alreadyLoginMsg: '',
-      isGoLogout: ''
+      isGoLogout: '',
+      isLoading: false,
     }
   }
 
@@ -51,6 +52,7 @@ class Login extends Component {
     } else {
       this.setState({
         isSubmit: true,
+        isLoading: true,
       })
       // console.log('belum login')
       const username = this.state.username;
@@ -61,6 +63,11 @@ class Login extends Component {
       })
       // setTimeout(() => this.props.history.push('/'), 3000)
       this.props.userLogin(username, password)
+      setTimeout(() =>
+        this.setState({
+          isLoading:false,
+        })
+      , 1000)
       // if ( !this.props.user.isLoading && !this.props.user.isError ) {
       //   this.setState({
       //     isLogin: 'yes',
@@ -113,13 +120,32 @@ class Login extends Component {
     let isLogin = ''
     let loginMessage = ''
     if ( this.state.isSubmit && !this.props.user.isLoadingIn && !this.props.user.isErrorIn ) {
+      // setTimeout(() => 
+      //   this.setState({
+      //     isLoading:false,
+      //   },
+      //     this.props.history.push('/')
+      //   ), 3000
+      // )
       // this.setState({
+      //   isLoading:false,
+      // })
       isLogin = 'yes'
       loginMessage = this.props.user.loginMessage
-      setTimeout(() => this.props.history.push('/'), 3000)
+      // setTimeout(() => this.props.history.push('/'), 3000)
+      alert(loginMessage)
+      this.props.history.push('/')
       // })
-    }
+    } else {}
     if ( this.state.isSubmit && !this.props.user.isLoadingIn && this.props.user.isErrorIn ) {
+      // setTimeout(() => 
+      //   this.setState({
+      //     isLoading:false,
+      //   }), 3000
+      // )
+      // this.setState({
+      //   isLoading:false,
+      // })
       // this.setState({
       isLogin = 'no'
       loginMessage = this.props.user.loginMessage
@@ -165,14 +191,16 @@ class Login extends Component {
       	</FormGroup>
       	<Button>Masuk</Button>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {isLogin==='yes'&&(
       <React.Fragment>
       <Alert color="success">
         {loginMessage}
       </Alert>
-      <div>
-        <Spinner color="success" />
-      </div>
       </React.Fragment>
       )}
       {isLogin==='no'&&(

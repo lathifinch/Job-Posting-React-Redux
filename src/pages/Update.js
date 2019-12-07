@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container, Row, Col } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Row, Col, Spinner } from 'reactstrap';
 import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
 
 import { connect } from 'react-redux';
+
+const {host, port} = require('../hostport')
 
 const mapStatetoProps = state => {
   return {
@@ -30,6 +32,7 @@ class Update extends Component {
         alreadyLogin: '',
         alreadyLoginMsg: '',
         isGoLogin: '',
+        isLoading: false,
       }
     } else {
       this.state = {
@@ -45,6 +48,7 @@ class Update extends Component {
         alreadyLoginMsg: '',
         isGoLogin: '',
         isFromRead: true,
+        isLoading: false,
       }
     }
   }
@@ -96,6 +100,7 @@ class Update extends Component {
       	location: '',
       	updateMessage: '',
       	isUpdated: '',
+        isLoading: true,
       })
 
 	    if (Object.keys(updateData).length !== 0) {
@@ -105,6 +110,7 @@ class Update extends Component {
         	console.log('result')
         	console.log(res)
         	this.setState({
+            isLoading: false,
         		isUpdated: 'yes',
           	updateMessage: res.message,
         	})
@@ -119,6 +125,7 @@ class Update extends Component {
         	console.log('error')
         	console.log(err.response.data)
         	this.setState({
+            isLoading: false,
         		isUpdated: 'no',
           	updateMessage: err.response.data.status + ', '
         			+ err.response.data.message,
@@ -127,6 +134,7 @@ class Update extends Component {
 
 	    } else {
 	    	this.setState({
+          isLoading: false,
       		isUpdated: 'yes',
         	updateMessage: 'Nothing updated!',
       	})
@@ -150,7 +158,7 @@ class Update extends Component {
 	getData = async (updateData, jobId, resToken) => {
     const result = await axios({
   		method: 'patch',
-  		url: 'http://localhost:8080/jobs/' + jobId,
+  		url: 'http://'+host+':'+port+'/jobs/' + jobId,
   		data: qs.stringify(updateData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -289,6 +297,11 @@ class Update extends Component {
         </Col>
       </Row>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {this.state.isUpdated=='yes'&&(
       <Alert color="success">
         {this.state.updateMessage}

@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container, Row, Col } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Row, Col, Spinner } from 'reactstrap';
 import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
 
 import { connect } from 'react-redux';
+
+const {host, port} = require('../hostport')
 
 const mapStatetoProps = state => {
   return {
@@ -30,6 +32,7 @@ class Create extends Component {
         alreadyLogin: '',
         alreadyLoginMsg: '',
         isGoLogin: '',
+        isLoading: false,
       }
     } else {
       this.state = {
@@ -45,6 +48,7 @@ class Create extends Component {
         alreadyLoginMsg: '',
         isGoLogin: '',
         isFromRead: true,
+        isLoading: false,
       }
     }
   }
@@ -91,6 +95,7 @@ class Create extends Component {
       	salary: '',
       	loc: '',
       	comId: '',
+        isLoading: true,
       })
       this.getData(createData, this.props.user.token)
       .then(res=>{
@@ -99,6 +104,7 @@ class Create extends Component {
     	  this.setState({
      		  isCreated: 'yes',
        	  createMessage: res.message,
+          isLoading: false,
     	  })
     	  // setTimeout(() => this.props.history.push('/'), 3000)
      	  // res.result.authorization
@@ -111,6 +117,7 @@ class Create extends Component {
     	  console.log('error')
      	  console.log(err)
      	  this.setState({
+          isLoading: false,
      		  isCreated: 'no',
        	  createMessage: err.response.data.status + ', '
      			+ err.response.data.message,
@@ -136,7 +143,7 @@ class Create extends Component {
   getData = async (createData, resToken) => {
     const result = await axios({
   		method: 'post',
-  		url: 'http://localhost:8080/jobs',
+  		url: 'http://'+host+':'+port+'/jobs',
   		data: qs.stringify(createData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -276,6 +283,11 @@ class Create extends Component {
         </Col>
       </Row>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {this.state.isCreated=='yes'&&(
       <Alert color="success">
         {this.state.createMessage}

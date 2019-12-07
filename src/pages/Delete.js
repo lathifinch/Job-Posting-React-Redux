@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from 'reactstrap';
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
 import { connect } from 'react-redux';
+
+const {host, port} = require('../hostport')
 
 const mapStatetoProps = state => {
   return {
@@ -24,6 +26,7 @@ class Delete extends Component {
         alreadyLogin: '',
         alreadyLoginMsg: '',
         isGoLogin: '',
+        isLoading: false,
       }
     } else {
       this.state = {
@@ -34,6 +37,7 @@ class Delete extends Component {
         alreadyLoginMsg: '',
         isGoLogin: '',
         isFromRead: true,
+        isLoading: false,
       }
     }
   }
@@ -68,6 +72,7 @@ class Delete extends Component {
       // console.log(deleteData)
       this.setState({
         jobId: '',
+        isLoading: true,
       })
       this.getData(jobId, this.props.user.token)
       .then(res=>{
@@ -76,6 +81,7 @@ class Delete extends Component {
        	this.setState({
        		isDeleted: 'yes',
          	deleteMessage: res.message,
+          isLoading: false,
       	})
        	// setTimeout(() => this.props.history.push('/'), 3000)
        	// res.result.authorization
@@ -88,6 +94,7 @@ class Delete extends Component {
       	console.log('error')
        	console.log(err.response.data)
        	this.setState({
+          isLoading: false,
        		isDeleted: 'no',
          	deleteMessage: err.response.data.status + ', '
      			+ err.response.data.message,
@@ -112,7 +119,7 @@ class Delete extends Component {
 	getData = async (jobId, resToken) => {
     const result = await axios({
   		method: 'delete',
-  		url: 'http://localhost:8080/jobs/' + jobId,
+  		url: 'http://'+host+':'+port+'/jobs/' + jobId,
   		// data: qs.stringify(loginData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -149,6 +156,11 @@ class Delete extends Component {
     	    	required
     	    />
       	</FormGroup>
+        {this.state.isLoading&&(
+          <div>
+            <Spinner color="success" />
+          </div>
+        )}
       	{this.state.isFromRead &&(
         <React.Fragment>
         <Button type="button" onClick={this.goBack}>Kembali</Button>

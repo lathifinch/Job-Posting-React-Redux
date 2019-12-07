@@ -1,12 +1,14 @@
 import axios from 'axios'
 import qs from 'qs'
 
+const {host, port} = require('../../hostport')
+
 export const userLogin = (username, password) => {
 	return {
 		type: 'USER_LOGIN',
 		payload: axios({
   		method: 'post',
-  		url: 'http://localhost:8080/login',
+  		url: 'http://'+host+':'+port+'/login',
   		data: qs.stringify({
   			username,
   			password

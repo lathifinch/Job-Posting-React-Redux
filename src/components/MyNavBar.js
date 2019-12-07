@@ -27,7 +27,7 @@ const MyNavBar = (props) => {
 
   return (
         <div style={style.wrapper}>
-      <Navbar style={{hover:{color:'#000'}}} expand="md">
+      <Navbar dark style={{hover:{color:'#000'}}} expand="md"> // color='dark' untuk background navbar, dark untuk warna sret3x kalau mode layar kecil
     <Container>
         <Link style={{color: '#fff'}} to="/"><FaHome size={24} /></Link>
         <NavbarToggler onClick={toggle} />

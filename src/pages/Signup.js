@@ -3,6 +3,8 @@ import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from
 import axios from 'axios'
 import qs from 'qs'
 
+const {host, port} = require('../hostport')
+
 export default class Signup extends Component {
 
 	constructor(props) {
@@ -14,6 +16,7 @@ export default class Signup extends Component {
     	isSignup: '',
     	signupMessage: '',
       isGoLogout: '',
+      isLoading: false,
     }
   }
 
@@ -52,6 +55,7 @@ export default class Signup extends Component {
           username: '',
           password: '',
           email: '',
+          isLoading: true,
         })
         this.getData(signupData)
         .then(res=>{
@@ -60,8 +64,9 @@ export default class Signup extends Component {
         	this.setState({
         		isSignup: 'yes',
           	signupMessage: res.message,
+            isLoading: false,
         	})
-        	setTimeout(() => this.props.history.push('/login'), 3000)
+        	setTimeout(() => this.props.history.push('/masuk'), 3000) // kalau /login page not found
         	// res.result.authorization
         	// res.result.message
         	// localStorage.setItem('token', res.result.authorization);
@@ -72,6 +77,7 @@ export default class Signup extends Component {
         	console.log('error')
         	console.log(err.response.data)
         	this.setState({
+            isLoading: false,
         		isSignup: 'no',
           	signupMessage: err.response.data.status + ', '
         			+ err.response.data.message,
@@ -87,7 +93,7 @@ export default class Signup extends Component {
   getData = async (signupData) => {
     const result = await axios({
   		method: 'post',
-  		url: 'http://localhost:8080/signup',
+  		url: 'http://'+host+':'+port+'/signup',
   		data: qs.stringify(signupData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -143,14 +149,16 @@ export default class Signup extends Component {
       	</FormGroup>
       	<Button>Daftar</Button>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {this.state.isSignup=='yes'&&(
       <React.Fragment>
       <Alert color="success">
         {this.state.signupMessage}
       </Alert>
-      <div>
-        <Spinner color="success" />
-      </div>
       </React.Fragment>
       )}
       {this.state.isSignup=='no'&&(

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Container } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Alert, Container, Spinner } from 'reactstrap';
 import axios from 'axios'
 import qs from 'qs'
 import { Link } from 'react-router-dom'
@@ -38,6 +38,7 @@ class UpdateCom extends Component {
         alreadyLoginMsg: '',
         isGoLogin: '',
         isSubmit: false,
+        isLoading: false,
       }
     } else {
       this.state = {
@@ -53,6 +54,7 @@ class UpdateCom extends Component {
         isGoLogin: '',
         isFromRead: true,
         isSubmit: false,
+        isLoading: false,
       }
     }
   }
@@ -67,7 +69,7 @@ class UpdateCom extends Component {
     });
   }
 
-	handleSubmit = (event) => {
+	handleSubmit = async (event) => {
     event.preventDefault();
 
     if (this.props.user.username !== 'lathifalrasyid') {
@@ -78,6 +80,7 @@ class UpdateCom extends Component {
 
       this.setState({
         isSubmit: true,
+        isLoading: true,
       })
 
       const comId = this.state.comId;
@@ -87,7 +90,7 @@ class UpdateCom extends Component {
       for (var o in this.state) {
         if (Object.hasOwnProperty.call(this.state, o)) {
         	if (!['isUpdated', 'updateMessage', 'alreadyLogin', 'alreadyLoginMsg',
-            'isGoLogin', 'comId', 'isFromRead', 'isSubmit', 'logo'].includes(o)
+            'isGoLogin', 'comId', 'isFromRead', 'isSubmit', 'isLoading', 'logo'].includes(o)
             && this.state[o] !== "") {
         		  updateData[o] = this.state[o];
               console.log('+++++++++++++++++++++++')
@@ -117,7 +120,11 @@ class UpdateCom extends Component {
 
 	    if (Object.keys(updateData).length !== 0) {
 
-        this.props.editCompany(fd, comId, this.props.user.token) //updateData
+        await this.props.editCompany(fd, comId, this.props.user.token) //updateData
+
+        this.setState({
+          isLoading: false,
+        })
 
         // this.getData(updateData, comId, this.props.user.token)
         // .then(res=>{
@@ -148,6 +155,7 @@ class UpdateCom extends Component {
 	    	this.setState({
        		isUpdated: 'yes',
          	updateMessage: 'Nothing updated!',
+          isLoading: false,
        	})
 	    }
     }
@@ -276,6 +284,11 @@ class UpdateCom extends Component {
         )}
         <Button type="submit">Perbarui</Button>
       </Form>
+      {this.state.isLoading&&(
+        <div>
+          <Spinner color="success" />
+        </div>
+      )}
       {isUpdated=='yes'&&(
       <Alert color="success">
         {updateMessage}

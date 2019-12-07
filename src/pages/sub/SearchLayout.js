@@ -18,6 +18,8 @@ import {
 import { FaTrash, FaEdit, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave } from 'react-icons/fa';
 import { MdLabelOutline, MdUpdate } from 'react-icons/md';
 
+const {host, port} = require('../../hostport')
+
 class CategoryList extends React.Component {
 	constructor(props) {
     super(props);
@@ -363,7 +365,7 @@ export default class SearchLayout extends React.Component {
   }
 
   callbackCategoryBox = (kategori) => {
-  	let link = 'http://localhost:8080/jobs/?category='+kategori;
+  	let link = 'http://'+host+':'+port+'/jobs/?category='+kategori;
   	this.getData(link)
   	.then(res=>{
   		console.log(res)
@@ -392,7 +394,7 @@ export default class SearchLayout extends React.Component {
         searchArray.push(dat);
       }
     }
-    let link = 'http://localhost:8080/jobs/';
+    let link = 'http://'+host+':'+port+'/jobs/';
     if (searchArray.length > 0) {
       link = link.concat('?');
       searchArray.forEach(k => {
@@ -416,7 +418,9 @@ export default class SearchLayout extends React.Component {
 	}
 
 	componentDidMount() {
-		let link = 'http://localhost:8080/jobs/';
+		let link = 'http://'+host+':'+port+'/jobs/';
+		// console.log(config.host)
+		// console.log(config.port)
 		// console.log(link)
 		this.getData(link)
     .then(res=>{
@@ -430,7 +434,7 @@ export default class SearchLayout extends React.Component {
 	}
 
 	getData = async(page)=>{
-    const listJobs = await axios.get(page!==undefined?page:'http://localhost:8080/jobs')
+    const listJobs = await axios.get(page!==undefined?page:'http://'+host+':'+port+'/jobs')
     return listJobs.data
   }
 
