@@ -41,14 +41,23 @@ $ yarn start # start app
 ## What It Looks Like
 
 - [x] Header:
+
 ![header](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/footer.png)
+
 - [x] List Jobs:
+
 ![listjob](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/listjob.png)
+
 - [x] List Companies:
+
 ![listcom](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/listcom.png)
+
 - [x] User Login:
+
 ![login](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/login.png)
+
 - [x] Footer:
+
 ![footer](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/footer.png)
 
 ## API
