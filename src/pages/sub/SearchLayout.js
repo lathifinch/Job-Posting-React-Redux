@@ -227,7 +227,7 @@ class JobCard extends React.Component {
 		return (
 			<Card style={cardStyle}>
 			<CardHeader style={{margin:0, padding:0}} >
-				<Navbar style={{margin:0, padding:0}} expand="md">
+				<Navbar light style={{margin:0, padding:0}} expand="md">
 					<Link style={{marginLeft:'15px', fontSize:'1.2rem'}} to={{ pathname:'/pekerjaan/' + jobsData.id, state:jobsData }}>{jobsData.jobs}</Link>
 					<NavbarToggler onClick={this.toggle} />
         		<Collapse isOpen={this.state.isOpen} navbar>
