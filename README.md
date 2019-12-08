@@ -12,45 +12,38 @@
 
 ## Prerequiste
 
-- Node.js
-- Express.js
+- ReactJS
+- Redux
 
 ## Definition
 
-- [x] RESTful API: A RESTful API is an application program interface (API) that uses HTTP requests to GET, PUT, POST and DELETE data.
-- [x] Node.js: Node.js is a JavaScript runtime environment that includes everything you need to execute a program written in JavaScript.
-- [x] Express.js: ExpressJS is a web application framework for Node.js that provides you with a simple API to build websites, web apps and back ends.
+- [x] ReactJS: React is a JavaScript library for building user interfaces. Learn what React is all about on React's homepage. Click the image above.
+- [x] Redux: Redux is a predictable state container for JavaScript apps. It helps you write applications that behave consistently, run in different environments (client, server, and native), and are easy to test. On top of that, it provides a great developer experience.
 
 ## Build Setup
 
 1. Clone repository
-   `$ git clone https://github.com/lathifinch/RESTful-API-for-Job-Posting-App.git`
+   `$ git clone https://github.com/lathifinch/Job-Posting-React-Redux.git`
 
 2. Install depedencies
 
 ```bash
-# with npm
-$ npm install
+# with yarn
+$ yarn install
 ```
 
-3. Setup your environment variable in `.env` files (if not exists, create your own).
-
-```env
-PORT = YOUR_PORT
-
-DB_HOSTNAME = YOUR_HOST_NAME
-DB_USERNAME = YOUR_USERNAME
-DB_PASSWORD = YOUR_PASSWORD
-DB_NAME = YOUR_DATABASE_NAME
-
-SECRET_JWT = YOUR_SECRET_KEY_FOR_JWT
-```
-
-4. Start API server
+3. Start React App
 
 ```bash
-$ npm start # start server
+$ yarn start # start app
 ```
+4. What It Looks Like
+
+- [x] Header:
+- [x] List Jobs:
+- [x] List Companies:
+- [x] User Login:
+- [x] Footer:
 
 ---
 
