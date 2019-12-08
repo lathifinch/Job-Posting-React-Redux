@@ -77,7 +77,7 @@ class Update extends Component {
       for (var o in this.state) {
         if (Object.hasOwnProperty.call(this.state, o)) {
         	if (!['isUpdated', 'updateMessage', 'alreadyLogin',
-            'alreadyLoginMsg', 'isGoLogin', 'jobId', 'isFromRead'].includes(o)
+            'alreadyLoginMsg', 'isGoLogin', 'jobId', 'isFromRead', 'isLoading'].includes(o)
             && this.state[o] !== "") {
         		  if (o !== 'salary') {
         			  updateData[o] = this.state[o];
