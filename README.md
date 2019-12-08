@@ -3,8 +3,8 @@
 > Job Posting App with ReactJS
 
 <p align="center">
-  <a href="https://cdn.worldvectorlogo.com/logos/react.svg">
-    <img title="Restful API" src="https://cdn-images-1.medium.com/max/871/1*d2zLEjERsrs1Rzk_95QU9A.png">
+  <a href="https://reactjs.org/">
+    <img title="ReactJS" src="https://cdn.worldvectorlogo.com/logos/react.svg">
   </a>
 </p>
 
