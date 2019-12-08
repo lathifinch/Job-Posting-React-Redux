@@ -15,6 +15,8 @@ import {getCompany} from '../redux/actions/company'
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import { MdAddCircle } from 'react-icons/md';
 
+const {host, port} = require('../hostport')
+
 const mapStatetoProps = state => {
   return {
     company: state.company,
@@ -54,7 +56,7 @@ class ReadCom extends Component {
   }
 
   getData = async(page)=>{
-    const listJobs = await axios.get(page!==undefined?page:'http://localhost:8080/company')
+    const listJobs = await axios.get(page!==undefined?page:'https://'+host+'/company')
     return listJobs.data
   }
 

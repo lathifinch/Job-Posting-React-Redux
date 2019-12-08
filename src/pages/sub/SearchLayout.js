@@ -365,7 +365,7 @@ export default class SearchLayout extends React.Component {
   }
 
   callbackCategoryBox = (kategori) => {
-  	let link = 'http://'+host+':'+port+'/jobs/?category='+kategori;
+  	let link = 'https://'+host+'/jobs/?category='+kategori;
   	this.getData(link)
   	.then(res=>{
   		console.log(res)
@@ -394,7 +394,7 @@ export default class SearchLayout extends React.Component {
         searchArray.push(dat);
       }
     }
-    let link = 'http://'+host+':'+port+'/jobs/';
+    let link = 'https://'+host+'/jobs/';
     if (searchArray.length > 0) {
       link = link.concat('?');
       searchArray.forEach(k => {
@@ -418,7 +418,7 @@ export default class SearchLayout extends React.Component {
 	}
 
 	componentDidMount() {
-		let link = 'http://'+host+':'+port+'/jobs/';
+		let link = 'https://'+host+'/jobs/';
 		// console.log(config.host)
 		// console.log(config.port)
 		// console.log(link)
@@ -434,7 +434,7 @@ export default class SearchLayout extends React.Component {
 	}
 
 	getData = async(page)=>{
-    const listJobs = await axios.get(page!==undefined?page:'http://'+host+':'+port+'/jobs')
+    const listJobs = await axios.get(page!==undefined?page:'https://'+host+'/jobs')
     return listJobs.data
   }
 

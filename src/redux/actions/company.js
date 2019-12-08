@@ -6,7 +6,7 @@ const {host, port} = require('../../hostport')
 export const getCompany = () => {
 	return {
 		type: 'GET_COM',
-		payload: axios.get('http://'+host+':'+port+'/company'),
+		payload: axios.get('https://'+host+'/company'),
 	}
 }
 
@@ -15,7 +15,7 @@ export const addCompany = (createData, resToken) => {
 		type: 'ADD_COM',
 		payload: axios({
   		method: 'post',
-  		url: 'http://'+host+':'+port+'/company',
+  		url: 'https://'+host+'/company',
   		data: createData,
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -30,7 +30,7 @@ export const editCompany = (updateData, comId, resToken) => {
 		type: 'EDIT_COM',
 		payload: axios({
   		method: 'patch',
-  		url: 'http://'+host+':'+port+'/company/' + comId,
+  		url: 'https://'+host+'/company/' + comId,
   		data: updateData,
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -45,7 +45,7 @@ export const delCompany = (comId, resToken) => {
 		type: 'DEL_COM',
 		payload: axios({
   		method: 'delete',
-  		url: 'http://'+host+':'+port+'/company/' + comId,
+  		url: 'https://'+host+'/company/' + comId,
   		// data: qs.stringify(loginData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',

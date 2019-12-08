@@ -143,7 +143,7 @@ class Create extends Component {
   getData = async (createData, resToken) => {
     const result = await axios({
   		method: 'post',
-  		url: 'http://'+host+':'+port+'/jobs',
+  		url: 'https://'+host+'/jobs',
   		data: qs.stringify(createData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',

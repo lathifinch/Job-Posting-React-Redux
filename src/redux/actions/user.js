@@ -8,7 +8,7 @@ export const userLogin = (username, password) => {
 		type: 'USER_LOGIN',
 		payload: axios({
   		method: 'post',
-  		url: 'http://'+host+':'+port+'/login',
+  		url: 'https://'+host+'/login',
   		data: qs.stringify({
   			username,
   			password

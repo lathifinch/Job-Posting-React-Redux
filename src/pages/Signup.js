@@ -93,7 +93,7 @@ export default class Signup extends Component {
   getData = async (signupData) => {
     const result = await axios({
   		method: 'post',
-  		url: 'http://'+host+':'+port+'/signup',
+  		url: 'https://'+host+'/signup',
   		data: qs.stringify(signupData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8'

@@ -119,7 +119,7 @@ class Delete extends Component {
 	getData = async (jobId, resToken) => {
     const result = await axios({
   		method: 'delete',
-  		url: 'http://'+host+':'+port+'/jobs/' + jobId,
+  		url: 'https://'+host+'/jobs/' + jobId,
   		// data: qs.stringify(loginData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',

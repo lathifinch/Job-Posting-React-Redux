@@ -158,7 +158,7 @@ class Update extends Component {
 	getData = async (updateData, jobId, resToken) => {
     const result = await axios({
   		method: 'patch',
-  		url: 'http://'+host+':'+port+'/jobs/' + jobId,
+  		url: 'https://'+host+'/jobs/' + jobId,
   		data: qs.stringify(updateData),
   		headers: {
     		'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
