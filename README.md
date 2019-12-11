@@ -42,7 +42,7 @@ $ yarn start # start app
 
 - [x] Header:
 
-![header](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/footer.png)
+![header](https://github.com/lathifinch/Job-Posting-React-Redux/blob/master/images/header.png)
 
 - [x] List Jobs:
 
